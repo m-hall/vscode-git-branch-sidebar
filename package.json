@@ -10,7 +10,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.helloWorld"
+        "onView:scm-local-branches"
     ],
     "main": "./out/extension.js",
     "contributes": {
