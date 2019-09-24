@@ -21,6 +21,25 @@
                     "name": "Local Branches"
                 }
             ]
+        },
+        "commands": [
+            {
+                "command": "scm-local-branches.refresh",
+                "title": "Refresh local branch list",
+                "icon": {
+                    "dark": "src/assets/refresh-dark.svg",
+                    "light": "src/assets/refresh-light.svg"
+                }
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "scm-local-branches.refresh",
+                    "when": "view == scm-local-branches",
+                    "group": "navigation"
+                }
+            ]
         }
     },
     "scripts": {
