@@ -33,6 +33,14 @@
                     "dark": "src/assets/refresh-dark.svg",
                     "light": "src/assets/refresh-light.svg"
                 }
+            },
+            {
+                "command": "scm-branch.delete",
+                "title": "Delete",
+                "icon": {
+                    "dark": "src/assets/delete-dark.svg",
+                    "light": "src/assets/delete-light.svg"
+                }
             }
         ],
         "menus": {
@@ -41,6 +49,13 @@
                     "command": "scm-local-branches.refresh",
                     "when": "view == scm-local-branches",
                     "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "scm-branch.delete",
+                    "when": "view == scm-local-branches && viewItem == branch",
+                    "group": "inline"
                 }
             ]
         }

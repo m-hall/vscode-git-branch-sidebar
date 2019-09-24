@@ -101,10 +101,25 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
 
         this.refresh();
     }
+    public async deleteBranch(branch: Branch): Promise<void> {
+        const path = branch.repo.rootUri.fsPath;
+        if (!path) {
+            return;
+        }
+        await exec(
+            `git branch -D ${branch.branchName}`,
+            {
+                cwd: path
+            }
+        );
+
+        this.refresh();
+    }
 
     getTreeItem(element: Branch): vscode.TreeItem {
         if (element.branchName) {
             const item = new vscode.TreeItem(element.branchName);
+            item.contextValue = 'branch';
             if (element.selected) {
                 item.label = '✔ ' + item.label;
             }
@@ -147,6 +162,9 @@ export class BranchSwitcher {
         });
         vscode.commands.registerCommand('scm-local-branches.switchBranch', (element: Branch) => {
             treeDataProvider.switchBranch(element);
+        });
+        vscode.commands.registerCommand('scm-branch.delete', (element: Branch) => {
+            treeDataProvider.deleteBranch(element);
         });
     }
 }
