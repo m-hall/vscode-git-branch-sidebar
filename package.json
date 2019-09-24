@@ -9,6 +9,9 @@
     "categories": [
         "Other"
     ],
+    "extensionDependencies": [
+        "vscode.git"
+    ],
     "activationEvents": [
         "onView:scm-local-branches"
     ],
