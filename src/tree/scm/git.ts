@@ -3,7 +3,6 @@ import { GitExtension, Repository, API } from '../../typings/git';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
 import * as path from 'path';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Branch } from './branch';
 
 const exec = promisify(child_process.exec);
@@ -14,12 +13,11 @@ export class Git {
     private repoStateChanges: vscode.Disposable[] = [];
 
     private repos: Repository[] = [];
-    private $repos: BehaviorSubject<Repository[]>;
+    public reposChanged: vscode.EventEmitter<null> = new vscode.EventEmitter<null>();
 
     private readonly validBranchName: RegExp = /^(?!\/|.*(?:[/.]\.|\/\/|@\{|\\))[^\040\177 ~^:?*[]+(?<!\.lock)(?<![/.])$/;
 
     constructor() {
-        this.$repos = new BehaviorSubject<Repository[]>(this.repos);
         this.getRepos();
     }
 
@@ -46,7 +44,7 @@ export class Git {
         this.repoStateChanges = [];
         if (api) {
             this.repos = api.repositories;
-            this.$repos.next(this.repos);
+            this.reposChanged.fire();
             this.repoStateChanges = this.repos.map(
                 (repo) => {
                     return repo.state.onDidChange(() => {
@@ -61,8 +59,8 @@ export class Git {
         this.getRepos();
     }
 
-    public getRepositories(): Observable<Repository[]> {
-        return this.$repos;
+    public getRepositories(): Repository[] {
+        return this.repos;
     }
 
     public async getBranches(repo: Repository): Promise<Branch[]> {

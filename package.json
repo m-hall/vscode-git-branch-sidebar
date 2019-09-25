@@ -2,7 +2,7 @@
     "name": "vscode-git-branch-sidebar",
     "displayName": "vscode-git-branch-sidebar",
     "description": "Adds a branches section to the source control sidebar for git",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "publisher": "mia-hall",
     "repository": "github:m-hall/vscode-git-branch-sidebar",
     "engines": {
@@ -85,6 +85,7 @@
         "pretest": "npm run compile",
         "test": "node ./out/test/runTest.js"
     },
+    "dependencies": {},
     "devDependencies": {
         "@types/glob": "^7.1.1",
         "@types/mocha": "^5.2.6",
@@ -92,7 +93,6 @@
         "@types/vscode": "^1.38.0",
         "glob": "^7.1.4",
         "mocha": "^6.1.4",
-        "rxjs": "^6.5.3",
         "tslint": "^5.12.1",
         "typescript": "^3.3.1",
         "vscode-test": "^1.2.0"

@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.1] - 2019-09-25
+
+* Fix required module not getting loaded, preventing startup
+
 ## [1.1.0] - 2019-09-25
 
 * Adds support for multi-repository projects

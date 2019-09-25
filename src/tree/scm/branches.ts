@@ -19,8 +19,9 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
 
     constructor(git: Git) {
         this.git = git;
-        this.git.getRepositories().subscribe((repos) => {
-            this.repos = repos;
+        this.repos = this.git.getRepositories();
+        this.git.reposChanged.event(() => {
+            this.repos = this.git.getRepositories();
             this._onDidChangeTreeData.fire();
         });
     }

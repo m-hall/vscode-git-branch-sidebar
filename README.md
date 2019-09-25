@@ -17,7 +17,6 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.1.0
+### 1.1.1
 
-* Adds support for multi-repository projects
-* Adds ability to rename branches
+* Fix broken startup
