@@ -45,8 +45,9 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
             return item;
         }
         const repoPath = element.repo.rootUri.fsPath;
-        const repoDirectory = repoPath.slice(repoPath.lastIndexOf('/'));
-        const item = new vscode.TreeItem(repoDirectory);
+        const repoDirectory = repoPath.split(/\/|\\/);
+        const item = new vscode.TreeItem(repoDirectory[repoDirectory.length - 1]);
+        item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         item.contextValue = 'repo';
         return item;
     }
