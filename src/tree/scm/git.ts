@@ -16,6 +16,8 @@ export class Git {
     private repos: Repository[] = [];
     private $repos: BehaviorSubject<Repository[]>;
 
+    private readonly validBranchName: RegExp = /^(?!\/|.*(?:[/.]\.|\/\/|@\{|\\))[^\040\177 ~^:?*[]+(?<!\.lock)(?<![/.])$/;
+
     constructor() {
         this.$repos = new BehaviorSubject<Repository[]>(this.repos);
         this.getRepos();
@@ -108,6 +110,27 @@ export class Git {
         }
         await exec(
             `git branch -D ${branch.branchName}`,
+            {
+                cwd: path
+            }
+        );
+
+        this.refresh();
+    }
+    public async renameBranch(branch: Branch, newName: string): Promise<void> {
+        if (!this.validBranchName.test(newName)) {
+            vscode.window.showErrorMessage('Branch name is not valid');
+        }
+        const path = branch.repo.rootUri.fsPath;
+        if (!path) {
+            return;
+        }
+        let cmd: string = `git branch -m ${branch.branchName} ${newName}`;
+        if (branch.selected) {
+            cmd = `git branch -m ${newName}`;
+        }
+        await exec(
+            cmd,
             {
                 cwd: path
             }

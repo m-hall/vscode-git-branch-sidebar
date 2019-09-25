@@ -43,6 +43,10 @@
                     "dark": "images/dark/close.svg",
                     "light": "images/light/close.svg"
                 }
+            },
+            {
+                "command": "scm-branch.rename",
+                "title": "Rename"
             }
         ],
         "menus": {
@@ -58,6 +62,18 @@
                     "command": "scm-branch.delete",
                     "when": "view == scm-local-branches && viewItem == branch",
                     "group": "inline"
+                },
+                {
+                    "command": "scm-branch.delete",
+                    "when": "view == scm-local-branches && viewItem == branch"
+                },
+                {
+                    "command": "scm-branch.rename",
+                    "when": "view == scm-local-branches && viewItem == branch"
+                },
+                {
+                    "command": "scm-branch.rename",
+                    "when": "view == scm-local-branches && viewItem == selectedBranch"
                 }
             ]
         }

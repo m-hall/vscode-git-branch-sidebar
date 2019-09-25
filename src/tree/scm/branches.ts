@@ -29,7 +29,7 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
         if (element.branchName) {
             const item = new vscode.TreeItem(element.branchName);
             if (element.selected) {
-                item.contextValue = 'selected-branch';
+                item.contextValue = 'selectedBranch';
                 item.iconPath = {
                     dark: vscode.Uri.file(path.join(extensionPath, 'images/dark/check.svg')),
                     light: vscode.Uri.file(path.join(extensionPath, 'images/light/check.svg'))
@@ -79,6 +79,15 @@ export class BranchSwitcher {
         });
         vscode.commands.registerCommand('scm-branch.delete', (branch: Branch) => {
             git.deleteBranch(branch);
+        });
+        vscode.commands.registerCommand('scm-branch.rename', async (branch: Branch) => {
+            const newName = await vscode.window.showInputBox({
+                value: branch.branchName
+            });
+
+            if (newName) {
+                git.renameBranch(branch, newName);
+            }
         });
     }
 }
