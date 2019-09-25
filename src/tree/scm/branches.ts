@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { Repository } from '../../typings/git';
 import * as path from 'path';
 import { Git } from './git';
+import { Branch } from './branch';
 
 const extension = vscode.extensions.getExtension('mia-hall.vscode-git-branch-sidebar');
 const extensionPath = extension ? extension.extensionPath : './';

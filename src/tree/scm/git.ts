@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import * as child_process from 'child_process';
 import * as path from 'path';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Branch } from './branch';
 
 const exec = promisify(child_process.exec);
 
@@ -43,6 +44,7 @@ export class Git {
         this.repoStateChanges = [];
         if (api) {
             this.repos = api.repositories;
+            this.$repos.next(this.repos);
             this.repoStateChanges = this.repos.map(
                 (repo) => {
                     return repo.state.onDidChange(() => {
