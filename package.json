@@ -4,6 +4,7 @@
     "description": "Adds a branches section to the source control sidebar for git",
     "version": "1.0.0",
     "publisher": "mia-hall",
+    "repository": "github:m-hall/vscode-git-branch-sidebar",
     "engines": {
         "vscode": "^1.38.0"
     },
