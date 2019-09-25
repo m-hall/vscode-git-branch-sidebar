@@ -17,13 +17,7 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.0.1
+### 1.1.0
 
-* Fix icons not showing
-
-### 1.0.0
-
-Initial release
-* List branches for single repository projects
-* Switch branches by clicking on them
-* Option to delete branches
+* Adds support for multi-repository projects
+* Adds ability to rename branches
