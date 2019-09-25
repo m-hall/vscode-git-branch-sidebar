@@ -1,9 +1,9 @@
 # Change Log
 
-All notable changes to the "vscode-git-branch-sidebar" extension will be documented in this file.
+## [1.0.1] - 2019-09-25
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Fix icons not showing
 
-## [Unreleased]
+## [1.0.0] - 2019-09-25
 
 - Initial release

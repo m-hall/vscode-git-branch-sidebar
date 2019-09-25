@@ -125,8 +125,8 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
             item.contextValue = 'branch';
             if (element.selected) {
                 item.iconPath = {
-                    dark: vscode.Uri.file(path.join(extensionPath, 'src/assets/dark/check.svg')),
-                    light: vscode.Uri.file(path.join(extensionPath, 'src/assets/light/check.svg'))
+                    dark: vscode.Uri.file(path.join(extensionPath, 'images/dark/check.svg')),
+                    light: vscode.Uri.file(path.join(extensionPath, 'images/light/check.svg'))
                 };
             } else {
                 item.command = {

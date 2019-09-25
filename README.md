@@ -17,6 +17,10 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
+### 1.0.1
+
+* Fix icons not showing
+
 ### 1.0.0
 
 Initial release

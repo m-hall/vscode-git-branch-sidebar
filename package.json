@@ -2,7 +2,7 @@
     "name": "vscode-git-branch-sidebar",
     "displayName": "vscode-git-branch-sidebar",
     "description": "Adds a branches section to the source control sidebar for git",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "mia-hall",
     "repository": "github:m-hall/vscode-git-branch-sidebar",
     "engines": {
@@ -32,16 +32,16 @@
                 "command": "scm-local-branches.refresh",
                 "title": "Refresh local branch list",
                 "icon": {
-                    "dark": "src/assets/dark/refresh.svg",
-                    "light": "src/assets/light/refresh.svg"
+                    "dark": "images/dark/refresh.svg",
+                    "light": "images/light/refresh.svg"
                 }
             },
             {
                 "command": "scm-branch.delete",
                 "title": "Delete",
                 "icon": {
-                    "dark": "src/assets/dark/close.svg",
-                    "light": "src/assets/light/close.svg"
+                    "dark": "images/dark/close.svg",
+                    "light": "images/light/close.svg"
                 }
             }
         ],
