@@ -46,21 +46,38 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
         }
         const repoPath = element.repo.rootUri.fsPath;
         const repoDirectory = repoPath.slice(repoPath.lastIndexOf('/'));
-        return new vscode.TreeItem(repoDirectory);
+        const item = new vscode.TreeItem(repoDirectory);
+        item.contextValue = 'repo';
+        return item;
     }
 
     async getChildren(element: Branch): Promise<Branch[]> {
-        if (!this.repos) {
+        if (!this.repos || this.repos.length < 1) {
             return [];
         }
         if (!element) {
             // root level
             if (this.repos.length === 1) {
+                // single repo
                 const repo = this.repos[0];
 
                 return await this.git.getBranches(repo);
+            } else {
+                // multi-repo
+                return this.repos.map((repo) => {
+                    return {
+                        repo
+                    };
+                });
             }
+        } else if (!element.branchName) {
+            // children of repo
+            const repo = element.repo;
+
+            return await this.git.getBranches(repo);
         }
+
+        // children of branch
         return [];
     }
 }
