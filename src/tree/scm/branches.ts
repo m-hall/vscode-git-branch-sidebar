@@ -4,8 +4,11 @@ import * as vscode from 'vscode';
 import { GitExtension, Repository, API } from '../../typings/git';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
+import * as path from 'path';
 
 const exec = promisify(child_process.exec);
+const extension = vscode.extensions.getExtension('mia-hall.vscode-git-branch-sidebar');
+const extensionPath = extension ? extension.extensionPath : './';
 interface Branch {
     repo: Repository;
     branchName?: string;
@@ -121,13 +124,17 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
             const item = new vscode.TreeItem(element.branchName);
             item.contextValue = 'branch';
             if (element.selected) {
-                item.label = '✔ ' + item.label;
+                item.iconPath = {
+                    dark: vscode.Uri.file(path.join(extensionPath, 'src/assets/dark/check.svg')),
+                    light: vscode.Uri.file(path.join(extensionPath, 'src/assets/light/check.svg'))
+                };
+            } else {
+                item.command = {
+                    command: 'scm-local-branches.switchBranch',
+                    arguments: [element],
+                    title: 'Switch branch'
+                };
             }
-            item.command = {
-                command: 'scm-local-branches.switchBranch',
-                arguments: [element],
-                title: 'Switch branch'
-            };
             return item;
         }
         const repoPath = element.repo.rootUri.fsPath;

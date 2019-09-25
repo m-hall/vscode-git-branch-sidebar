@@ -30,16 +30,16 @@
                 "command": "scm-local-branches.refresh",
                 "title": "Refresh local branch list",
                 "icon": {
-                    "dark": "src/assets/refresh-dark.svg",
-                    "light": "src/assets/refresh-light.svg"
+                    "dark": "src/assets/dark/refresh.svg",
+                    "light": "src/assets/light/refresh.svg"
                 }
             },
             {
                 "command": "scm-branch.delete",
                 "title": "Delete",
                 "icon": {
-                    "dark": "src/assets/delete-dark.svg",
-                    "light": "src/assets/delete-light.svg"
+                    "dark": "src/assets/dark/close.svg",
+                    "light": "src/assets/light/close.svg"
                 }
             }
         ],
