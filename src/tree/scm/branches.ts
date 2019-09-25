@@ -75,7 +75,7 @@ export class BranchSwitcher {
             git.refresh();
         });
         vscode.commands.registerCommand('scm-local-branches.switchBranch', (branch: Branch) => {
-            git.switchBranch(branch);
+            git.checkoutBranch(branch);
         });
         vscode.commands.registerCommand('scm-branch.delete', (branch: Branch) => {
             git.deleteBranch(branch);

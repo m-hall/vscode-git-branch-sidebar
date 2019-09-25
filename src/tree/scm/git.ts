@@ -89,7 +89,7 @@ export class Git {
         return branches;
     }
 
-    public async switchBranch(branch: Branch): Promise<void> {
+    public async checkoutBranch(branch: Branch): Promise<void> {
         const path = branch.repo.rootUri.fsPath;
         if (!path) {
             return;
