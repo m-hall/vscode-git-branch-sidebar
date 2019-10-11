@@ -23,6 +23,7 @@ export class Git implements vscode.Disposable {
 
     dispose() {
         delete this.getApi;
+        delete this.repos;
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
         this.repoStateChanges.forEach(listener => listener.dispose());

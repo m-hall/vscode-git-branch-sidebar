@@ -4,9 +4,6 @@ import * as path from 'path';
 import { Git } from './git';
 import { Branch } from './branch';
 
-const extension = vscode.extensions.getExtension('mia-hall.vscode-git-branch-sidebar');
-const extensionPath = extension ? extension.extensionPath : './';
-
 export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vscode.Disposable {
     private repos: Repository[] = [];
 
@@ -17,8 +14,11 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vsco
 
     private disposables: vscode.Disposable[] = [];
 
-    constructor(git: Git) {
+    private context: vscode.ExtensionContext;
+
+    constructor(git: Git, context: vscode.ExtensionContext) {
         this.git = git;
+        this.context = context;
         this.updateRepos();
         this.disposables.push(
             this.git.reposChanged.event(() => {
@@ -30,6 +30,8 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vsco
 
     dispose(): void {
         delete this.git;
+        delete this.context;
+        delete this.repos;
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
     }
@@ -45,8 +47,8 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vsco
             if (element.selected) {
                 item.contextValue = 'selectedBranch';
                 item.iconPath = {
-                    dark: vscode.Uri.file(path.join(extensionPath, 'images/dark/check.svg')),
-                    light: vscode.Uri.file(path.join(extensionPath, 'images/light/check.svg'))
+                    dark: vscode.Uri.file(path.join(this.context.extensionPath, 'images/dark/check.svg')),
+                    light: vscode.Uri.file(path.join(this.context.extensionPath, 'images/light/check.svg'))
                 };
             } else {
                 item.contextValue = 'branch';
@@ -110,7 +112,7 @@ export class BranchSwitcher {
 
     constructor(context: vscode.ExtensionContext) {
         const git = new Git();
-        const treeDataProvider = new BranchTreeProvider(git);
+        const treeDataProvider = new BranchTreeProvider(git, context);
 
         this.disposables.push(
             git,
