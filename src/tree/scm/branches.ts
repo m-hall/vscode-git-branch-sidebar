@@ -137,12 +137,13 @@ export class BranchSwitcher {
             vscode.commands.registerCommand('scm-branch.delete', async (branch: Branch) => {
                 const config = vscode.workspace.getConfiguration('scm-local-branches');
                 if (config.get('confirmDelete', false)) {
+                    const confirmButton = 'Confirm';
                     const action = await vscode.window.showWarningMessage(
                         `Are you sure you want to delete branch '${branch.branchName}`,
                         { modal: true },
-                        'Confirm'
+                        confirmButton
                     );
-                    if (action !== 'Yes') {
+                    if (action !== confirmButton) {
                         return;
                     }
                 }
