@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import { GitExtension, Repository, API } from '../../typings/git';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
-import * as path from 'path';
 import { Branch } from './branch';
 
 const exec = promisify(child_process.exec);
 
-export class Git {
+export class Git implements vscode.Disposable {
     private gitApi?: API;
 
+    private disposables: vscode.Disposable[] = [];
     private repoStateChanges: vscode.Disposable[] = [];
 
     private repos: Repository[] = [];
@@ -21,6 +21,14 @@ export class Git {
         this.getRepos();
     }
 
+    dispose() {
+        delete this.getApi;
+        this.disposables.forEach(disposable => disposable.dispose());
+        this.disposables = [];
+        this.repoStateChanges.forEach(listener => listener.dispose());
+        this.repoStateChanges = [];
+    }
+
     private getApi(): API|null {
         if (this.gitApi) {
             return this.gitApi;
@@ -30,9 +38,11 @@ export class Git {
             const gitExtension = gitContainer.exports;
             const gitApi = gitExtension.getAPI(1);
             this.gitApi = gitApi;
-            gitApi.onDidChangeState(() => {
-                this.refresh();
-            });
+            this.disposables.push(
+                gitApi.onDidChangeState(() => {
+                    this.refresh();
+                })
+            );
             return this.gitApi;
         }
         return null;
@@ -88,6 +98,9 @@ export class Git {
     }
 
     public async createBranch(repo: Repository, branchName: string): Promise<void> {
+        if (!this.validBranchName.test(branchName)) {
+            vscode.window.showErrorMessage('Branch name is not valid');
+        }
         const path = repo.rootUri.fsPath;
         if (!path) {
             return;

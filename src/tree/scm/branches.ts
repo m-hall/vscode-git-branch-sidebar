@@ -7,7 +7,7 @@ import { Branch } from './branch';
 const extension = vscode.extensions.getExtension('mia-hall.vscode-git-branch-sidebar');
 const extensionPath = extension ? extension.extensionPath : './';
 
-export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
+export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vscode.Disposable {
     private repos: Repository[] = [];
 
     private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
@@ -15,13 +15,23 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
 
     private git: Git;
 
+    private disposables: vscode.Disposable[] = [];
+
     constructor(git: Git) {
         this.git = git;
         this.updateRepos();
-        this.git.reposChanged.event(() => {
-            this.updateRepos()
-            this._onDidChangeTreeData.fire();
-        });
+        this.disposables.push(
+            this.git.reposChanged.event(() => {
+                this.updateRepos();
+                this._onDidChangeTreeData.fire();
+            })
+        );
+    }
+
+    dispose(): void {
+        delete this.git;
+        this.disposables.forEach(disposable => disposable.dispose());
+        this.disposables = [];
     }
 
     updateRepos(): void {
@@ -103,6 +113,8 @@ export class BranchSwitcher {
         const treeDataProvider = new BranchTreeProvider(git);
 
         this.disposables.push(
+            git,
+            treeDataProvider,
             vscode.window.createTreeView('scm-local-branches', { treeDataProvider }),
             vscode.commands.registerCommand('scm-local-branches.refresh', () => {
                 git.refresh();
@@ -165,5 +177,6 @@ export class BranchSwitcher {
 
     dispose() {
         this.disposables.forEach(disposable => disposable.dispose());
+        this.disposables = [];
     }
 }
