@@ -1,10 +1,10 @@
 # Change Log
 
-## [1.2.0] - 2019-10-XX
+## [1.2.0] - 2019-10-11
 
 * Add ability to create a new branch from current branch
 * Add confirmations for deleting branches
-* Added unit tests
+* Properly dispose things on deactivation
 
 ## [1.1.1] - 2019-09-25
 

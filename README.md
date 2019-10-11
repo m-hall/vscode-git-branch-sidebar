@@ -16,3 +16,5 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 ### 1.2.0
 
 * Add ability to create a new branch from current branch
+* Add confirmations for deleting branches
+* Properly dispose things on deactivation
