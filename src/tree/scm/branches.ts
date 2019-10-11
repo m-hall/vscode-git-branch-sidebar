@@ -17,12 +17,16 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
 
     constructor(git: Git) {
         this.git = git;
-        this.repos = this.git.getRepositories();
+        this.updateRepos();
         this.git.reposChanged.event(() => {
-            this.repos = this.git.getRepositories();
-            vscode.commands.executeCommand('setContext', 'scmLocalBranches:isSingleRepository', this.repos.length === 1);
+            this.updateRepos()
             this._onDidChangeTreeData.fire();
         });
+    }
+
+    updateRepos(): void {
+        this.repos = this.git.getRepositories();
+        vscode.commands.executeCommand('setContext', 'scmLocalBranches:isSingleRepository', this.repos.length === 1);
     }
 
     getTreeItem(element: Branch): vscode.TreeItem {
@@ -130,7 +134,18 @@ export class BranchSwitcher {
                     git.createBranch(branch.repo, branchName);
                 }
             }),
-            vscode.commands.registerCommand('scm-branch.delete', (branch: Branch) => {
+            vscode.commands.registerCommand('scm-branch.delete', async (branch: Branch) => {
+                const config = vscode.workspace.getConfiguration('scm-local-branches');
+                if (config.get('confirmDelete', false)) {
+                    const action = await vscode.window.showWarningMessage(
+                        `Are you sure you want to delete branch '${branch.branchName}`,
+                        { modal: true },
+                        'Confirm'
+                    );
+                    if (action !== 'Yes') {
+                        return;
+                    }
+                }
                 git.deleteBranch(branch);
             }),
             vscode.commands.registerCommand('scm-branch.rename', async (branch: Branch) => {

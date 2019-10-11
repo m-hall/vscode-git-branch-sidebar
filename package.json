@@ -2,7 +2,7 @@
     "name": "vscode-git-branch-sidebar",
     "displayName": "vscode-git-branch-sidebar",
     "description": "Adds a branches section to the source control sidebar for git",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "publisher": "mia-hall",
     "repository": {
         "type": "git",
@@ -22,6 +22,18 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "vscode-git-branch-sidebar",
+            "properties": {
+                "scm-local-branches.confirmDelete": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Confirm on delete",
+                    "scope": "window"
+                }
+            }
+        },
         "views": {
             "scm": [
                 {
