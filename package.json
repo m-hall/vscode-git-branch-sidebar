@@ -5,9 +5,9 @@
     "version": "1.1.1",
     "publisher": "mia-hall",
     "repository": {
-		"type": "git",
-		"url": "https://github.com/m-hall/vscode-git-branch-sidebar.git"
-	},
+        "type": "git",
+        "url": "https://github.com/m-hall/vscode-git-branch-sidebar.git"
+    },
     "engines": {
         "vscode": "^1.38.0"
     },
@@ -32,11 +32,27 @@
         },
         "commands": [
             {
+                "command": "scm-local-branches.create",
+                "title": "Create a new branch from the current commit.",
+                "icon": {
+                    "dark": "images/dark/add.svg",
+                    "light": "images/light/add.svg"
+                }
+            },
+            {
                 "command": "scm-local-branches.refresh",
                 "title": "Refresh local branch list",
                 "icon": {
                     "dark": "images/dark/refresh.svg",
                     "light": "images/light/refresh.svg"
+                }
+            },
+            {
+                "command": "scm-repo.branch",
+                "title": "Branch",
+                "icon": {
+                    "dark": "images/dark/add.svg",
+                    "light": "images/light/add.svg"
                 }
             },
             {
@@ -55,12 +71,22 @@
         "menus": {
             "view/title": [
                 {
+                    "command": "scm-local-branches.create",
+                    "when": "view == scm-local-branches && scmLocalBranches:isSingleRepository",
+                    "group": "navigation"
+                },
+                {
                     "command": "scm-local-branches.refresh",
                     "when": "view == scm-local-branches",
                     "group": "navigation"
                 }
             ],
             "view/item/context": [
+                {
+                    "command": "scm-repo.branch",
+                    "when": "view == scm-local-branches && viewItem == repo",
+                    "group": "inline"
+                },
                 {
                     "command": "scm-branch.delete",
                     "when": "view == scm-local-branches && viewItem == branch",

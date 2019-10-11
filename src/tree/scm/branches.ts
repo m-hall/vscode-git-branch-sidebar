@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Repository } from '../../typings/git';
 import * as path from 'path';
@@ -22,6 +20,7 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
         this.repos = this.git.getRepositories();
         this.git.reposChanged.event(() => {
             this.repos = this.git.getRepositories();
+            vscode.commands.executeCommand('setContext', 'scmLocalBranches:isSingleRepository', this.repos.length === 1);
             this._onDidChangeTreeData.fire();
         });
     }
@@ -82,31 +81,73 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch> {
         // children of branch
         return [];
     }
+
+    public getCurrentRepository(): Repository|null {
+        if (this.repos.length === 1) {
+            return this.repos[0];
+        }
+
+        return null;
+    }
 }
 
 export class BranchSwitcher {
+    private disposables: vscode.Disposable[] = [];
+
     constructor(context: vscode.ExtensionContext) {
         const git = new Git();
         const treeDataProvider = new BranchTreeProvider(git);
-        const scmBranches = vscode.window.createTreeView('scm-local-branches', { treeDataProvider });
 
-        vscode.commands.registerCommand('scm-local-branches.refresh', () => {
-            git.refresh();
-        });
-        vscode.commands.registerCommand('scm-local-branches.switchBranch', (branch: Branch) => {
-            git.checkoutBranch(branch);
-        });
-        vscode.commands.registerCommand('scm-branch.delete', (branch: Branch) => {
-            git.deleteBranch(branch);
-        });
-        vscode.commands.registerCommand('scm-branch.rename', async (branch: Branch) => {
-            const newName = await vscode.window.showInputBox({
-                value: branch.branchName
-            });
+        this.disposables.push(
+            vscode.window.createTreeView('scm-local-branches', { treeDataProvider }),
+            vscode.commands.registerCommand('scm-local-branches.refresh', () => {
+                git.refresh();
+            }),
+            vscode.commands.registerCommand('scm-local-branches.create', async () => {
+                const repo = treeDataProvider.getCurrentRepository();
+                if (!repo) {
+                    return;
+                }
+                const branchName = await vscode.window.showInputBox({
+                    placeHolder: 'Enter a branch name',
+                    prompt: 'Create a branch from the current commit'
+                });
 
-            if (newName) {
-                git.renameBranch(branch, newName);
-            }
-        });
+                if (branchName) {
+                    git.createBranch(repo, branchName);
+                }
+            }),
+            vscode.commands.registerCommand('scm-local-branches.switchBranch', (branch: Branch) => {
+                git.checkoutBranch(branch);
+            }),
+            vscode.commands.registerCommand('scm-repo.branch', async (branch: Branch) => {
+                const branchName = await vscode.window.showInputBox({
+                    placeHolder: 'Enter a branch name',
+                    prompt: 'Create a branch from the current commit'
+                });
+
+                if (branchName) {
+                    git.createBranch(branch.repo, branchName);
+                }
+            }),
+            vscode.commands.registerCommand('scm-branch.delete', (branch: Branch) => {
+                git.deleteBranch(branch);
+            }),
+            vscode.commands.registerCommand('scm-branch.rename', async (branch: Branch) => {
+                const newName = await vscode.window.showInputBox({
+                    value: branch.branchName,
+                    placeHolder: 'Enter a branch name',
+                    prompt: `Renaming branch from '${branch.branchName}`
+                });
+
+                if (newName) {
+                    git.renameBranch(branch, newName);
+                }
+            })
+        );
+    }
+
+    dispose() {
+        this.disposables.forEach(disposable => disposable.dispose());
     }
 }

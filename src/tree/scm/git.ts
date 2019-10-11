@@ -87,6 +87,20 @@ export class Git {
         return branches;
     }
 
+    public async createBranch(repo: Repository, branchName: string): Promise<void> {
+        const path = repo.rootUri.fsPath;
+        if (!path) {
+            return;
+        }
+        await exec(
+            `git checkout -b ${branchName}`,
+            {
+                cwd: path
+            }
+        );
+
+        this.refresh();
+    }
     public async checkoutBranch(branch: Branch): Promise<void> {
         const path = branch.repo.rootUri.fsPath;
         if (!path) {
