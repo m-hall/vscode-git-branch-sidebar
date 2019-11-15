@@ -1,10 +1,22 @@
 import * as vscode from 'vscode';
 import { GitExtension, Repository, API } from './typings/git-extension';
-import { promisify } from 'util';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
 
-const exec = promisify(child_process.exec);
+const exec = (command: string, options?: child_process.ExecOptions): Promise<{stdout: string, stderr: string}> => {
+    return new Promise((resolve, reject) => {
+        child_process.exec(command, options, (err, stdout, stderr) => {
+            const result = {stdout: stdout.toString(), stderr: stderr.toString()};
+
+            if (err)  {
+                (<any>result).code = err;
+                reject(result);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
 
 export class Git implements vscode.Disposable {
     private gitApi?: API;
@@ -90,18 +102,22 @@ export class Git implements vscode.Disposable {
             return [];
         }
 
-        const {stdout, stderr} = await exec(
-            'git branch',
-            {
-                cwd: path
-            }
-        );
+        let branchNames: string[];
 
-        if (stderr) {
-            vscode.window.showErrorMessage('Failed to retrieve the branches', stderr);
+        try {
+            const {stdout, stderr} = await exec(
+                'git branch',
+                {
+                    cwd: path
+                }
+            );
+            branchNames = stdout.split(/\n/g).filter(branch => !!branch);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to retrieve the branches\n\n' + err.stderr);
+
+            throw err;
         }
 
-        const branchNames = stdout.split(/\n/g).filter(branch => !!branch);
         const branches: Branch[] = branchNames.map((branch) => {
             const isStarred = branch.indexOf('*') === 0;
             const branchName = isStarred ? branch.slice(1).trim() : branch.trim();
@@ -127,15 +143,15 @@ export class Git implements vscode.Disposable {
             return;
         }
 
-        const {stderr} = await exec(
-            `git checkout -b ${branchName}`,
-            {
-                cwd: path
-            }
-        );
-
-        if (stderr) {
-            vscode.window.showErrorMessage('Failed to create branch', stderr);
+        try {
+            await exec(
+                `git checkout -b ${branchName}`,
+                {
+                    cwd: path
+                }
+            );
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to create branch\n\n' + err.stderr);
         }
     }
     public async checkoutBranch(branch: Branch): Promise<void> {
@@ -145,15 +161,15 @@ export class Git implements vscode.Disposable {
             return;
         }
 
-        const {stderr} = await exec(
-            `git checkout ${branch.branchName}`,
-            {
-                cwd: path
-            }
-        );
-
-        if (stderr) {
-            vscode.window.showErrorMessage('Failed to checkout branch', stderr);
+        try {
+            await exec(
+                `git checkout ${branch.branchName}`,
+                {
+                    cwd: path
+                }
+            );
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to checkout branch\n\n' + err.stderr);
         }
     }
     public async deleteBranch(branch: Branch): Promise<void> {
@@ -163,15 +179,15 @@ export class Git implements vscode.Disposable {
             return;
         }
 
-        const {stderr} = await exec(
-            `git branch -D ${branch.branchName}`,
-            {
-                cwd: path
-            }
-        );
-
-        if (stderr) {
-            vscode.window.showErrorMessage('Failed to delete branch', stderr);
+        try {
+            await exec(
+                `git branch -D ${branch.branchName}`,
+                {
+                    cwd: path
+                }
+            );
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to delete branch\n\n' + err.stderr);
         }
     }
     public async renameBranch(branch: Branch, newName: string): Promise<void> {
@@ -189,15 +205,15 @@ export class Git implements vscode.Disposable {
             ? `git branch -m ${newName}`
             : `git branch -m ${branch.branchName} ${newName}`;
 
-        const {stderr} = await exec(
-            cmd,
-            {
-                cwd: path
-            }
-        );
-
-        if (stderr) {
-            vscode.window.showErrorMessage('Failed to rename branch', stderr);
+        try {
+            await exec(
+                cmd,
+                {
+                    cwd: path
+                }
+            );
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to rename branch\n\n' + err.stderr);
         }
     }
 }
