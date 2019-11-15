@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { Repository } from './typings/git';
+import { Repository } from './typings/git-extension';
 import * as path from 'path';
 import { Git } from './git';
-import { Branch } from './branch';
+import { Branch } from './models/branch';
 import { BranchCommands } from './enums/branch-commands.enum';
 import { ContextOptions } from './enums/context-options.enum';
 import { TreeNodeContext } from './enums/tree-node-context.enum';

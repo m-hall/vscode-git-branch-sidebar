@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { GitExtension, Repository, API } from './typings/git';
+import { GitExtension, Repository, API } from './typings/git-extension';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
-import { Branch } from './branch';
+import { Branch } from './models/branch';
 
 const exec = promisify(child_process.exec);
 
@@ -24,8 +24,10 @@ export class Git implements vscode.Disposable {
     dispose() {
         delete this.getApi;
         delete this.repos;
+
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
+
         this.repoStateChanges.forEach(listener => listener.dispose());
         this.repoStateChanges = [];
     }
@@ -34,25 +36,32 @@ export class Git implements vscode.Disposable {
         if (this.gitApi) {
             return this.gitApi;
         }
+
         const gitContainer = vscode.extensions.getExtension<GitExtension>('vscode.git');
+
         if (gitContainer) {
             const gitExtension = gitContainer.exports;
             const gitApi = gitExtension.getAPI(1);
+
             this.gitApi = gitApi;
             this.disposables.push(
                 gitApi.onDidChangeState(() => {
                     this.refresh();
                 })
             );
+
             return this.gitApi;
         }
+
         return null;
     }
 
     private getRepos() {
         let api = this.getApi();
+
         this.repoStateChanges.forEach(listener => listener.dispose());
         this.repoStateChanges = [];
+
         if (api) {
             this.repos = api.repositories;
             this.reposChanged.fire();
@@ -76,25 +85,30 @@ export class Git implements vscode.Disposable {
 
     public async getBranches(repo: Repository): Promise<Branch[]> {
         const path = repo.rootUri.fsPath;
+
         if (!path) {
             return [];
         }
+
         const {stdout} = await exec(
             'git branch',
             {
                 cwd: path
             }
         );
+
         const branchNames = stdout.split(/\n/g).filter(branch => !!branch);
         const branches: Branch[] = branchNames.map((branch) => {
             const isStarred = branch.indexOf('*') === 0;
             const branchName = isStarred ? branch.slice(1).trim() : branch.trim();
+
             return {
                 repo,
                 branchName,
                 selected: isStarred
             };
         });
+
         return branches;
     }
 
@@ -102,66 +116,68 @@ export class Git implements vscode.Disposable {
         if (!this.validBranchName.test(branchName)) {
             vscode.window.showErrorMessage('Branch name is not valid');
         }
+
         const path = repo.rootUri.fsPath;
+
         if (!path) {
             return;
         }
+
         await exec(
             `git checkout -b ${branchName}`,
             {
                 cwd: path
             }
         );
-
-        this.refresh();
     }
     public async checkoutBranch(branch: Branch): Promise<void> {
         const path = branch.repo.rootUri.fsPath;
+
         if (!path) {
             return;
         }
+
         await exec(
             `git checkout ${branch.branchName}`,
             {
                 cwd: path
             }
         );
-
-        this.refresh();
     }
     public async deleteBranch(branch: Branch): Promise<void> {
         const path = branch.repo.rootUri.fsPath;
+
         if (!path) {
             return;
         }
+
         await exec(
             `git branch -D ${branch.branchName}`,
             {
                 cwd: path
             }
         );
-
-        this.refresh();
     }
     public async renameBranch(branch: Branch, newName: string): Promise<void> {
         if (!this.validBranchName.test(newName)) {
             vscode.window.showErrorMessage('Branch name is not valid');
         }
+
         const path = branch.repo.rootUri.fsPath;
+
         if (!path) {
             return;
         }
-        let cmd: string = `git branch -m ${branch.branchName} ${newName}`;
-        if (branch.selected) {
-            cmd = `git branch -m ${newName}`;
-        }
+
+        const cmd: string = branch.selected
+            ? `git branch -m ${newName}`
+            : `git branch -m ${branch.branchName} ${newName}`;
+
         await exec(
             cmd,
             {
                 cwd: path
             }
         );
-
-        this.refresh();
     }
 }

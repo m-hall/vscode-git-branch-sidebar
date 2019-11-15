@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { Git } from './git';
-import { Branch } from './branch';
+import { Branch } from './models/branch';
 import { BranchTreeProvider } from './branch-tree-provider';
-import { Repository } from './typings/git';
+import { Repository } from './typings/git-extension';
 import { BranchCommands } from './enums/branch-commands.enum';
 import { RepoCommands } from './enums/repo-commands.enum';
 import { GlobalCommands } from './enums/global-commands.enum';
