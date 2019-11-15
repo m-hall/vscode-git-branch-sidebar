@@ -2,7 +2,7 @@
     "name": "vscode-git-branch-sidebar",
     "displayName": "vscode-git-branch-sidebar",
     "description": "Adds a branches section to the source control sidebar for git",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "publisher": "mia-hall",
     "repository": {
         "type": "git",
@@ -60,7 +60,7 @@
                 }
             },
             {
-                "command": "scm-repo.branch",
+                "command": "scm-local-branches.repo.create-branch",
                 "title": "Branch",
                 "icon": {
                     "dark": "images/dark/add.svg",
@@ -68,7 +68,7 @@
                 }
             },
             {
-                "command": "scm-branch.delete",
+                "command": "scm-local-branches.branch.delete",
                 "title": "Delete",
                 "icon": {
                     "dark": "images/dark/close.svg",
@@ -76,7 +76,7 @@
                 }
             },
             {
-                "command": "scm-branch.rename",
+                "command": "scm-local-branches.branch.rename",
                 "title": "Rename"
             }
         ],
@@ -95,26 +95,26 @@
             ],
             "view/item/context": [
                 {
-                    "command": "scm-repo.branch",
+                    "command": "scm-local-branches.repo.create-branch",
                     "when": "view == scm-local-branches && viewItem == repo",
                     "group": "inline"
                 },
                 {
-                    "command": "scm-branch.delete",
+                    "command": "scm-local-branches.branch.delete",
                     "when": "view == scm-local-branches && viewItem == branch",
                     "group": "inline"
                 },
                 {
-                    "command": "scm-branch.delete",
+                    "command": "scm-local-branches.branch.delete",
                     "when": "view == scm-local-branches && viewItem == branch"
                 },
                 {
-                    "command": "scm-branch.rename",
+                    "command": "scm-local-branches.branch.rename",
                     "when": "view == scm-local-branches && viewItem == branch"
                 },
                 {
-                    "command": "scm-branch.rename",
-                    "when": "view == scm-local-branches && viewItem == selectedBranch"
+                    "command": "scm-local-branches.branch.rename",
+                    "when": "view == scm-local-branches && viewItem == activeBranch"
                 }
             ]
         }

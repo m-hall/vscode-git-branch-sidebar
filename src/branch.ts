@@ -1,4 +1,4 @@
-import { Repository } from "../../typings/git";
+import { Repository } from "./typings/git";
 
 export interface Branch {
     repo: Repository;

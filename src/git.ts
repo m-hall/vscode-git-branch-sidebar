@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GitExtension, Repository, API } from '../../typings/git';
+import { GitExtension, Repository, API } from './typings/git';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
 import { Branch } from './branch';

@@ -13,8 +13,7 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.2.0
+### 1.3.0
 
-* Add ability to create a new branch from current branch
-* Add confirmations for deleting branches
-* Properly dispose things on deactivation
+* Handle errors when failing to switch branches
+* Internal cleanup/restructure
