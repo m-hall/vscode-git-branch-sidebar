@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { GitExtension, Repository, API } from './typings/git-extension';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
+import { stdout } from 'process';
 
 const exec = (command: string, options?: child_process.ExecOptions): Promise<{stdout: string, stderr: string}> => {
     return new Promise((resolve, reject) => {
@@ -241,6 +242,63 @@ export class Git implements vscode.Disposable {
             );
         } catch (err) {
             vscode.window.showErrorMessage('Failed to rename branch\n\n' + err.stderr);
+        }
+    }
+    public async getCurrentUpstream(branch: Branch): Promise<string> {
+        const path = branch.repo.rootUri.fsPath;
+
+        if (!path) {
+            return '';
+        }
+
+        try {
+            const {stdout, stderr} = await exec(
+                `${this.gitPath} rev-parse --abbrev-ref ${branch.branchName}@{upstream}`,
+                {
+                    cwd: path
+                }
+            );
+            return stdout.trim();
+        } catch (err) { }
+
+        return '';
+    }
+
+    public async setUpstream(branch: Branch, upstream: string): Promise<void> {
+        const path = branch.repo.rootUri.fsPath;
+
+        if (!path) {
+            return;
+        }
+
+        try {
+            const {stdout, stderr} = await exec(
+                `${this.gitPath} branch ${branch.branchName} -u ${upstream}`,
+                {
+                    cwd: path
+                }
+            );
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to set upstream\n\n' + err.stderr);
+        }
+    }
+
+    public async deleteUpstream(branch: Branch): Promise<void> {
+        const path = branch.repo.rootUri.fsPath;
+
+        if (!path) {
+            return;
+        }
+
+        try {
+            const {stdout, stderr} = await exec(
+                `${this.gitPath} branch ${branch.branchName} --unset-upstream`,
+                {
+                    cwd: path
+                }
+            );
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to remove upstream\n\n' + err.stderr);
         }
     }
 }

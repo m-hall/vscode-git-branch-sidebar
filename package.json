@@ -78,6 +78,14 @@
             {
                 "command": "scm-local-branches.branch.rename",
                 "title": "Rename"
+            },
+            {
+                "command": "scm-local-branches.branch.set-upstream",
+                "title": "Set upstream"
+            },
+            {
+                "command": "scm-local-branches.branch.delete-upstream",
+                "title": "Delete branch upstream"
             }
         ],
         "menus": {
@@ -115,6 +123,22 @@
                 {
                     "command": "scm-local-branches.branch.rename",
                     "when": "view == scm-local-branches && viewItem == activeBranch"
+                },
+                {
+                    "command": "scm-local-branches.branch.set-upstream",
+                    "when": "view == scm-local-branches && viewItem == branch"
+                },
+                {
+                    "command": "scm-local-branches.branch.set-upstream",
+                    "when": "view == scm-local-branches && viewItem == activeBranch"
+                },
+                {
+                    "command": "scm-local-branches.branch.delete-upstream",
+                    "when": "view == scm-local-branches && viewItem == branch"
+                },
+                {
+                    "command": "scm-local-branches.branch.delete-upstream",
+                    "when": "view == scm-local-branches && viewItem == activeBranch"
                 }
             ]
         }
@@ -126,6 +150,7 @@
         "pretest": "npm run compile",
         "test": "node ./out/test/runTest.js"
     },
+    "dependencies": {},
     "devDependencies": {
         "@types/glob": "^7.1.1",
         "@types/mocha": "^5.2.6",
