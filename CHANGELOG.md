@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.4.0] - 2021-03-09
+
+* Use git.path preference
+* Option to update/remove upstream from context menu
+
+## [1.3.0] - 2019-11-15
+
+* Handle errors when failing to switch branches
+* Internal cleanup/restructure
+
 ## [1.2.0] - 2019-10-11
 
 * Add ability to create a new branch from current branch

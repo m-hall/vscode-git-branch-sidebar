@@ -13,7 +13,7 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.3.0
+### 1.4.0
 
-* Handle errors when failing to switch branches
-* Internal cleanup/restructure
+* Use git.path preference
+* Option to update/remove upstream from context menu
