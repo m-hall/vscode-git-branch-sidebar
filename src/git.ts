@@ -27,7 +27,7 @@ export class Git implements vscode.Disposable {
     private repoStateChanges: vscode.Disposable[] = [];
 
     private repos: Repository[] = [];
-    public reposChanged: vscode.EventEmitter<null> = new vscode.EventEmitter<null>();
+    public reposChanged: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
 
     private readonly validBranchName: RegExp = /^(?!\/|.*(?:[/.]\.|\/\/|@\{|\\))[^\040\177 ~^:?*[]+(?<!\.lock)(?<![/.])$/;
 
@@ -42,7 +42,6 @@ export class Git implements vscode.Disposable {
 
     dispose() {
         delete this.gitApi;
-        this.repos = [];
 
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];

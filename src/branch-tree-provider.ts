@@ -10,8 +10,8 @@ import { TreeNodeContext } from './enums/tree-node-context.enum';
 export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vscode.Disposable {
     private repos: Repository[] = [];
 
-    private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-    readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+    readonly onDidChangeTreeData: vscode.Event<void> = this._onDidChangeTreeData.event;
 
     private git: Git;
 
@@ -32,9 +32,6 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vsco
     }
 
     dispose(): void {
-        delete this.git;
-        delete this.context;
-        delete this.repos;
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
     }
