@@ -19,6 +19,7 @@ const exec = (command: string, options?: child_process.ExecOptions): Promise<{st
 };
 
 export class Git implements vscode.Disposable {
+    private gitPath?: string;
     private gitApi?: API;
 
     private disposables: vscode.Disposable[] = [];
@@ -31,17 +32,43 @@ export class Git implements vscode.Disposable {
 
     constructor() {
         this.getRepos();
+        this.getGitPath();
+
+        this.disposables.push(
+            vscode.workspace.onDidChangeConfiguration(() => this.getGitPath())
+        );
     }
 
     dispose() {
-        delete this.getApi;
-        delete this.repos;
+        delete this.gitApi;
+        this.repos = [];
 
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
 
         this.repoStateChanges.forEach(listener => listener.dispose());
         this.repoStateChanges = [];
+    }
+
+    private async getGitPath(): Promise<void> {
+        const gitConfig = vscode.workspace.getConfiguration('git');
+        this.gitPath = 'git';
+        if (gitConfig.has('path')) {
+            const pathConfig = gitConfig.get<string|string[]>('path');
+            if (Array.isArray(pathConfig)) {
+                for (const gp of pathConfig) {
+                    try {
+                        const {stdout, stderr} = await exec(
+                            `${gp} --version`,
+                        );
+                        this.gitPath = gp;
+                        return;
+                    } catch (err) { }
+                }
+            } else if (typeof pathConfig === 'string') {
+                this.gitPath = pathConfig;
+            }
+        }
     }
 
     private getApi(): API|null {
@@ -106,7 +133,7 @@ export class Git implements vscode.Disposable {
 
         try {
             const {stdout, stderr} = await exec(
-                'git branch',
+                `${this.gitPath} branch`,
                 {
                     cwd: path
                 }
@@ -145,7 +172,7 @@ export class Git implements vscode.Disposable {
 
         try {
             await exec(
-                `git checkout -b ${branchName}`,
+                `${this.gitPath} checkout -b ${branchName}`,
                 {
                     cwd: path
                 }
@@ -163,7 +190,7 @@ export class Git implements vscode.Disposable {
 
         try {
             await exec(
-                `git checkout ${branch.branchName}`,
+                `${this.gitPath} checkout ${branch.branchName}`,
                 {
                     cwd: path
                 }
@@ -181,7 +208,7 @@ export class Git implements vscode.Disposable {
 
         try {
             await exec(
-                `git branch -D ${branch.branchName}`,
+                `${this.gitPath} branch -D ${branch.branchName}`,
                 {
                     cwd: path
                 }
@@ -202,8 +229,8 @@ export class Git implements vscode.Disposable {
         }
 
         const cmd: string = branch.selected
-            ? `git branch -m ${newName}`
-            : `git branch -m ${branch.branchName} ${newName}`;
+            ? `${this.gitPath} branch -m ${newName}`
+            : `${this.gitPath} branch -m ${branch.branchName} ${newName}`;
 
         try {
             await exec(
