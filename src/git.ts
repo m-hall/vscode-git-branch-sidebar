@@ -158,28 +158,6 @@ export class Git implements vscode.Disposable {
         return branches;
     }
 
-    public async createBranch(repo: Repository, branchName: string): Promise<void> {
-        if (!this.validBranchName.test(branchName)) {
-            vscode.window.showErrorMessage('Branch name is not valid');
-        }
-
-        const path = repo.rootUri.fsPath;
-
-        if (!path) {
-            return;
-        }
-
-        try {
-            await exec(
-                `${this.gitPath} checkout -b ${branchName}`,
-                {
-                    cwd: path
-                }
-            );
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to create branch\n\n' + err.stderr);
-        }
-    }
     public async checkoutBranch(branch: Branch): Promise<void> {
         const path = branch.repo.rootUri.fsPath;
 

@@ -6,6 +6,7 @@ import { Repository } from './typings/git-extension';
 import { BranchCommands } from './enums/branch-commands.enum';
 import { RepoCommands } from './enums/repo-commands.enum';
 import { GlobalCommands } from './enums/global-commands.enum';
+import { ExternalCommands } from './enums/external-commands.enum';
 
 
 export class BranchSwitcher {
@@ -40,14 +41,8 @@ export class BranchSwitcher {
                 if (!repo) {
                     return;
                 }
-                const branchName = await vscode.window.showInputBox({
-                    placeHolder: 'Enter a branch name',
-                    prompt: 'Create a branch from the current commit'
-                });
 
-                if (branchName) {
-                    this.git.createBranch(repo, branchName);
-                }
+                vscode.commands.executeCommand(ExternalCommands.createBranch, [repo]);
             }),
         );
     }
@@ -57,14 +52,8 @@ export class BranchSwitcher {
                 if (!repo) {
                     return;
                 }
-                const branchName = await vscode.window.showInputBox({
-                    placeHolder: 'Enter a branch name',
-                    prompt: 'Create a branch from the current commit'
-                });
 
-                if (branchName) {
-                    this.git.createBranch(repo, branchName);
-                }
+                vscode.commands.executeCommand(ExternalCommands.createBranch, [repo]);
             }),
         );
     }
@@ -73,16 +62,6 @@ export class BranchSwitcher {
             vscode.commands.registerCommand(BranchCommands.checkout, (branch: Branch) => {
                 this.git.checkoutBranch(branch);
             }),
-            // vscode.commands.registerCommand(BranchCommands.branchFrom, async (branch: Branch) => {
-            //     const branchName = await vscode.window.showInputBox({
-            //         placeHolder: 'Enter a branch name',
-            //         prompt: 'Create a branch from the current commit'
-            //     });
-
-            //     if (branchName) {
-            //         this.git.createBranch(branch.repo, branchName);
-            //     }
-            // }),
             vscode.commands.registerCommand(BranchCommands.delete, async (branch: Branch) => {
                 const config = vscode.workspace.getConfiguration('scm-local-branches');
                 if (config.get('confirmDelete', false)) {
