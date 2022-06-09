@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { GitExtension, Repository, API } from './typings/git-extension';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
-import { stdout } from 'process';
 
 const exec = (command: string, options?: child_process.ExecOptions): Promise<{stdout: string, stderr: string}> => {
     return new Promise((resolve, reject) => {
@@ -63,7 +62,7 @@ export class Git implements vscode.Disposable {
                         );
                         this.gitPath = gp;
                         return;
-                    } catch (err) { }
+                    } catch (err: any) { }
                 }
             } else if (typeof pathConfig === 'string') {
                 this.gitPath = pathConfig;
@@ -139,7 +138,7 @@ export class Git implements vscode.Disposable {
                 }
             );
             branchNames = stdout.split(/\n/g).filter(branch => !!branch);
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to retrieve the branches\n\n' + err.stderr);
 
             throw err;
@@ -177,7 +176,7 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to create branch\n\n' + err.stderr);
         }
     }
@@ -195,7 +194,7 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to checkout branch\n\n' + err.stderr);
         }
     }
@@ -213,7 +212,7 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to delete branch\n\n' + err.stderr);
         }
     }
@@ -239,7 +238,7 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to rename branch\n\n' + err.stderr);
         }
     }
@@ -258,7 +257,7 @@ export class Git implements vscode.Disposable {
                 }
             );
             return stdout.trim();
-        } catch (err) { }
+        } catch (err: any) { }
 
         return '';
     }
@@ -277,7 +276,7 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to set upstream\n\n' + err.stderr);
         }
     }
@@ -296,7 +295,7 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err) {
+        } catch (err: any) {
             vscode.window.showErrorMessage('Failed to remove upstream\n\n' + err.stderr);
         }
     }
