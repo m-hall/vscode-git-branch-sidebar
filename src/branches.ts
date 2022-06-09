@@ -64,7 +64,7 @@ export class BranchSwitcher {
             }),
             vscode.commands.registerCommand(BranchCommands.delete, async (branch: Branch) => {
                 const config = vscode.workspace.getConfiguration('scm-local-branches');
-                if (config.get('confirmDelete', false)) {
+                if (config.get('confirmDelete', true)) {
                     const confirmButton = 'Confirm';
                     const action = await vscode.window.showWarningMessage(
                         `Are you sure you want to delete branch '${branch.branchName}?`,
@@ -78,21 +78,25 @@ export class BranchSwitcher {
                 this.git.deleteBranch(branch);
             }),
             vscode.commands.registerCommand(BranchCommands.rename, async (branch: Branch) => {
-                const config = vscode.workspace.getConfiguration('git');
-                const prefix: string = config.get('branchPrefix', '');
+                const config = vscode.workspace.getConfiguration('scm-local-branches');
                 const options: vscode.InputBoxOptions = {
                     value: branch.branchName,
                     placeHolder: 'Enter a branch name',
                     prompt: `Renaming branch from '${branch.branchName}`,
-                }
+                };
 
-                if (prefix && branch.branchName?.startsWith(prefix)) {
-                    options.valueSelection = [prefix.length, branch.branchName.length];
+                if (config.get('renameRespectsPrefix', true)) {
+                    const gitConfig = vscode.workspace.getConfiguration('git');
+                    const prefix: string = gitConfig.get('branchPrefix', '');
+    
+                    if (prefix && branch.branchName?.startsWith(prefix)) {
+                        options.valueSelection = [prefix.length, branch.branchName.length];
+                    }
                 }
 
                 const newName = await vscode.window.showInputBox(options);
 
-                if (newName) {
+                if (newName && newName !== branch.branchName) {
                     this.git.renameBranch(branch, newName);
                 }
             }),

@@ -31,6 +31,12 @@
                     "default": true,
                     "markdownDescription": "Confirm on delete",
                     "scope": "window"
+                },
+                "scm-local-branches.renameRespectsPrefix": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Rename will not select the prefix by default when choosing a new name.",
+                    "scope": "window"
                 }
             }
         },
