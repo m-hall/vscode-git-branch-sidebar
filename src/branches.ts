@@ -78,11 +78,19 @@ export class BranchSwitcher {
                 this.git.deleteBranch(branch);
             }),
             vscode.commands.registerCommand(BranchCommands.rename, async (branch: Branch) => {
-                const newName = await vscode.window.showInputBox({
+                const config = vscode.workspace.getConfiguration('git');
+                const prefix: string = config.get('branchPrefix', '');
+                const options: vscode.InputBoxOptions = {
                     value: branch.branchName,
                     placeHolder: 'Enter a branch name',
-                    prompt: `Renaming branch from '${branch.branchName}`
-                });
+                    prompt: `Renaming branch from '${branch.branchName}`,
+                }
+
+                if (prefix && branch.branchName?.startsWith(prefix)) {
+                    options.valueSelection = [prefix.length, branch.branchName.length];
+                }
+
+                const newName = await vscode.window.showInputBox(options);
 
                 if (newName) {
                     this.git.renameBranch(branch, newName);

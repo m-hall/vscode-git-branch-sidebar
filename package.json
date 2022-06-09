@@ -2,7 +2,7 @@
     "name": "vscode-git-branch-sidebar",
     "displayName": "vscode-git-branch-sidebar",
     "description": "Adds a branches section to the source control sidebar for git",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "publisher": "mia-hall",
     "repository": {
         "type": "git",

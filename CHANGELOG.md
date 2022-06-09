@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.5.1] - 2022-06-09
+
+* Don't select prefix by default when renaming branches
+
 ## [1.5.0] - 2022-06-09
 
 * Support for git.branchPrefix when creating new branches

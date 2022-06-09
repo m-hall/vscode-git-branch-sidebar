@@ -13,9 +13,7 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.5.0
+### 1.5.1
 
-* Support for git.branchPrefix when creating new branches (Available starting VSCode 1.68)
-* Switch to ESLint
-* Requires VSCode 1.67
+* Don't select prefix by default when renaming branches
 
