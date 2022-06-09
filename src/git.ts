@@ -62,7 +62,7 @@ export class Git implements vscode.Disposable {
                         );
                         this.gitPath = gp;
                         return;
-                    } catch (err: any) { }
+                    } catch (err) { }
                 }
             } else if (typeof pathConfig === 'string') {
                 this.gitPath = pathConfig;
@@ -138,8 +138,8 @@ export class Git implements vscode.Disposable {
                 }
             );
             branchNames = stdout.split(/\n/g).filter(branch => !!branch);
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to retrieve the branches\n\n' + err.stderr);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to retrieve the branches\n\n' + (err as any).stderr);
 
             throw err;
         }
@@ -172,8 +172,8 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to checkout branch\n\n' + err.stderr);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to checkout branch\n\n' + (err as any).stderr);
         }
     }
     public async deleteBranch(branch: Branch): Promise<void> {
@@ -190,8 +190,8 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to delete branch\n\n' + err.stderr);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to delete branch\n\n' + (err as any).stderr);
         }
     }
     public async renameBranch(branch: Branch, newName: string): Promise<void> {
@@ -216,8 +216,8 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to rename branch\n\n' + err.stderr);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to rename branch\n\n' + (err as any).stderr);
         }
     }
     public async getCurrentUpstream(branch: Branch): Promise<string> {
@@ -235,7 +235,7 @@ export class Git implements vscode.Disposable {
                 }
             );
             return stdout.trim();
-        } catch (err: any) { }
+        } catch (err) { }
 
         return '';
     }
@@ -254,8 +254,8 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to set upstream\n\n' + err.stderr);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to set upstream\n\n' + (err as any).stderr);
         }
     }
 
@@ -273,8 +273,8 @@ export class Git implements vscode.Disposable {
                     cwd: path
                 }
             );
-        } catch (err: any) {
-            vscode.window.showErrorMessage('Failed to remove upstream\n\n' + err.stderr);
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to remove upstream\n\n' + (err as any).stderr);
         }
     }
 }
