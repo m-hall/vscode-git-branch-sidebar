@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.5.0] - 2022-06-09
+
+* Support for git.branchPrefix when creating new branches
+* Switch to ESLint
+* Requires VSCode 1.67
+
 ## [1.4.0] - 2021-03-09
 
 * Use git.path preference

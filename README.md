@@ -13,7 +13,9 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.4.0
+### 1.5.0
 
-* Use git.path preference
-* Option to update/remove upstream from context menu
+* Support for git.branchPrefix when creating new branches (Available starting VSCode 1.68)
+* Switch to ESLint
+* Requires VSCode 1.67
+
