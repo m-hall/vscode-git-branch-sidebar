@@ -4,5 +4,7 @@ export enum BranchCommands {
     rename = 'scm-local-branches.branch.rename',
     branchFrom = 'scm-local-branches.branch.branch-from',
     setUpstream = 'scm-local-branches.branch.set-upstream',
-    unsetUpstream = 'scm-local-branches.branch.unset-upstream'
+    unsetUpstream = 'scm-local-branches.branch.unset-upstream',
+    fetch = 'scm-local-branches.branch.fetch',
+    fetchCheckout = 'scm-local-branches.branch.fetch-checkout'
 }

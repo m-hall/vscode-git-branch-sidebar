@@ -131,7 +131,7 @@ export class Git implements vscode.Disposable {
                 branchName: branch.name,
                 selected: branch.name == head?.name,
                 upstreamState: this.createUpstreamStateString(branch),
-                upstreamBranchName: this.getUpstreamBranchName(branch)
+                upstream: branch.upstream
             };
         });
 
@@ -174,7 +174,7 @@ export class Git implements vscode.Disposable {
 
     public async deleteBranch(branch: Branch): Promise<void> {
         try {
-            await branch.repo.deleteBranch(branch.branchName!!);
+            await branch.repo.deleteBranch(branch.branchName!!, /* force = */ true);
         } catch (err) {
             vscode.window.showErrorMessage('Failed to delete branch\n\n' + (err as any).stderr);
         }
@@ -207,10 +207,23 @@ export class Git implements vscode.Disposable {
 
     public async unsetUpstream(branch: Branch): Promise<void> {
         try {
-            this.execCustomAction(branch.repo, ['branch', '--unset-upstream', branch.branchName!!])
+            await this.execCustomAction(branch.repo, ['branch', '--unset-upstream', branch.branchName!!])
             this.reposChanged.fire();
         } catch (err) {
             vscode.window.showErrorMessage('Failed to remove upstream\n\n' + (err as any).stderr);
+        }
+    }
+
+    public async fetch(branch: Branch): Promise<void> {
+        if (!branch.upstream) {
+            vscode.window.showErrorMessage('Branch does not have upstream set');
+            return;
+        }
+        try {
+            await this.execCustomAction(branch.repo, ['fetch', branch.upstream.remote, branch.upstream.name + ':' + branch.branchName!!]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to fetch changes\n\n' + (err as any).stderr);
         }
     }
 
