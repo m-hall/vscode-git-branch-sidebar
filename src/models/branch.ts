@@ -1,9 +1,9 @@
-import { Repository } from "../typings/git-extension";
+import { Repository, UpstreamRef } from "../typings/git-extension";
 
 export interface Branch {
-    repo: Repository;
-    branchName?: string;
-    selected?: boolean;
-    upstreamState?: string;
-    upstreamBranchName?: string;
-}
+    readonly repo: Repository;
+    readonly branchName?: string;
+    readonly selected?: boolean;
+    readonly upstreamState?: string;
+    readonly upstream?: UpstreamRef;
+};

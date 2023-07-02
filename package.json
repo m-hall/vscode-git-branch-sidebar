@@ -98,6 +98,14 @@
             {
                 "command": "scm-local-branches.branch.unset-upstream",
                 "title": "Unset upstream"
+            },
+            {
+                "command": "scm-local-branches.branch.fetch",
+                "title": "Fetch changes"
+            },
+            {
+                "command": "scm-local-branches.branch.fetch-checkout",
+                "title": "Fetch changes & Checkout"
             }
         ],
         "menus": {
@@ -151,6 +159,14 @@
                 {
                     "command": "scm-local-branches.branch.unset-upstream",
                     "when": "view == scm-local-branches && viewItem == activeBranch"
+                },
+                {
+                    "command": "scm-local-branches.branch.fetch",
+                    "when": "view == scm-local-branches && viewItem == branch"
+                },
+                {
+                    "command": "scm-local-branches.branch.fetch-checkout",
+                    "when": "view == scm-local-branches && viewItem == branch"
                 }
             ]
         }
