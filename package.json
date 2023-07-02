@@ -26,6 +26,12 @@
             "type": "object",
             "title": "vscode-git-branch-sidebar",
             "properties": {
+                "scm-local-branches.showUpstreamInformation": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Show upstream information beside branch name",
+                    "scope": "window"
+                },
                 "scm-local-branches.confirmDelete": {
                     "type": "boolean",
                     "default": true,
@@ -90,8 +96,8 @@
                 "title": "Set upstream"
             },
             {
-                "command": "scm-local-branches.branch.delete-upstream",
-                "title": "Delete branch upstream"
+                "command": "scm-local-branches.branch.unset-upstream",
+                "title": "Unset upstream"
             }
         ],
         "menus": {
@@ -139,11 +145,11 @@
                     "when": "view == scm-local-branches && viewItem == activeBranch"
                 },
                 {
-                    "command": "scm-local-branches.branch.delete-upstream",
+                    "command": "scm-local-branches.branch.unset-upstream",
                     "when": "view == scm-local-branches && viewItem == branch"
                 },
                 {
-                    "command": "scm-local-branches.branch.delete-upstream",
+                    "command": "scm-local-branches.branch.unset-upstream",
                     "when": "view == scm-local-branches && viewItem == activeBranch"
                 }
             ]
