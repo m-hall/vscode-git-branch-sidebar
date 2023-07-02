@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GitExtension, Repository, API, RefType, Branch as GitBranch } from './typings/git-extension';
+import { GitExtension, Repository, API, Branch as GitBranch } from './typings/git-extension';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
 
@@ -141,7 +141,7 @@ export class Git implements vscode.Disposable {
     private createUpstreamStateString(branch: GitBranch): string | undefined {
         let upstreamState = null;
         if (branch.upstream) {
-            upstreamState = ''
+            upstreamState = '';
             if (branch.ahead) {
                 upstreamState += '↑' + branch.ahead;
             }
@@ -153,20 +153,20 @@ export class Git implements vscode.Disposable {
         if (upstreamState) {
             return '[' + upstreamState + '] ';
         } else {
-            return undefined
+            return undefined;
         }
     }
 
     private getUpstreamBranchName(branch: GitBranch): string | undefined {
         if (branch.upstream) {
-            return branch.upstream.remote + "/" + branch.upstream.name
+            return branch.upstream.remote + "/" + branch.upstream.name;
         }
-        return undefined
+        return undefined;
     }
 
     public async checkoutBranch(branch: Branch): Promise<void> {
         try {
-            await branch.repo.checkout(branch.branchName!!)
+            await branch.repo.checkout(branch.branchName!!);
         } catch (err) {
             vscode.window.showErrorMessage('Failed to checkout branch\n\n' + (err as any).stderr);
         }
@@ -174,7 +174,7 @@ export class Git implements vscode.Disposable {
 
     public async deleteBranch(branch: Branch): Promise<void> {
         try {
-            await branch.repo.deleteBranch(branch.branchName!!)
+            await branch.repo.deleteBranch(branch.branchName!!);
         } catch (err) {
             vscode.window.showErrorMessage('Failed to delete branch\n\n' + (err as any).stderr);
         }
@@ -185,23 +185,12 @@ export class Git implements vscode.Disposable {
             vscode.window.showErrorMessage('Branch name is not valid');
         }
 
-        const path = branch.repo.rootUri.fsPath;
-
-        if (!path) {
-            return;
-        }
-
-        const cmd: string = branch.selected
-            ? `${this.gitPath} branch -m ${newName}`
-            : `${this.gitPath} branch -m ${branch.branchName} ${newName}`;
-
         try {
-            await exec(
-                cmd,
-                {
-                    cwd: path
-                }
-            );
+            if (branch.selected) {
+                await this.execCustomAction(branch.repo, ['branch', '-m', newName]);
+            } else {
+                await this.execCustomAction(branch.repo, ['branch', '-m', branch.branchName!!, newName]);
+            }
             this.reposChanged.fire();
         } catch (err) {
             vscode.window.showErrorMessage('Failed to rename branch\n\n' + (err as any).stderr);
@@ -209,42 +198,34 @@ export class Git implements vscode.Disposable {
     }
 
     public async setUpstream(branch: Branch, upstream: string): Promise<void> {
-        const path = branch.repo.rootUri.fsPath;
-
-        if (!path) {
-            return;
-        }
-
         try {
-            const {stdout, stderr} = await exec(
-                `${this.gitPath} branch ${branch.branchName} -u ${upstream}`,
-                {
-                    cwd: path
-                }
-            );
-            this.reposChanged.fire();
+            branch.repo.setBranchUpstream(branch.branchName!!, upstream);
         } catch (err) {
             vscode.window.showErrorMessage('Failed to set upstream\n\n' + (err as any).stderr);
         }
     }
 
     public async unsetUpstream(branch: Branch): Promise<void> {
-        const path = branch.repo.rootUri.fsPath;
-
-        if (!path) {
-            return;
-        }
-
         try {
-            const {stdout, stderr} = await exec(
-                `${this.gitPath} branch ${branch.branchName} --unset-upstream`,
-                {
-                    cwd: path
-                }
-            );
+            this.execCustomAction(branch.repo, ['branch', '--unset-upstream', branch.branchName!!])
             this.reposChanged.fire();
         } catch (err) {
             vscode.window.showErrorMessage('Failed to remove upstream\n\n' + (err as any).stderr);
         }
+    }
+
+    private async execCustomAction(repo: Repository, args: string[]): Promise<{stdout: string, stderr: string}> {
+        const path = repo.rootUri.fsPath;
+
+        if (!path) {
+            return { stdout: "", stderr: "" };
+        }
+
+        return await exec(
+            [this.gitPath, ...args].join(' '),
+            {
+                cwd: path
+            }
+        );
     }
 }
