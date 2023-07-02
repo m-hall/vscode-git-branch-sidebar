@@ -43,7 +43,13 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vsco
 
     getTreeItem(element: Branch): vscode.TreeItem {
         if (element.branchName) {
-            const item = new vscode.TreeItem(element.branchName);
+            var displayName = element.branchName;
+            const config = vscode.workspace.getConfiguration('scm-local-branches');
+            if (config.get('showUpstreamInformation', true)) {
+                displayName = (element.upstreamState ?? '') + displayName;
+            }
+            
+            const item = new vscode.TreeItem(displayName);
 
             if (element.selected) {
                 item.contextValue = TreeNodeContext.activeBranch;

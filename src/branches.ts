@@ -101,9 +101,8 @@ export class BranchSwitcher {
                 }
             }),
             vscode.commands.registerCommand(BranchCommands.setUpstream, async (branch: Branch) => {
-                const currentUpstream = await this.git.getCurrentUpstream(branch);
                 const newUpstream = await vscode.window.showInputBox({
-                    value: currentUpstream,
+                    value: branch.upstreamBranchName,
                     placeHolder: 'Enter a new upstream',
                     prompt: `Updating upstream for branch '${branch.branchName}`
                 });
@@ -111,16 +110,16 @@ export class BranchSwitcher {
                 if (newUpstream) {
                     this.git.setUpstream(branch, newUpstream);
                 } else if (newUpstream !== undefined) {
-                    // set to empty string will be treated like a delete
-                    vscode.commands.executeCommand(BranchCommands.deleteUpstream, [branch]);
+                    // set to empty string will be treated like a removal of tracking upstream
+                    vscode.commands.executeCommand(BranchCommands.unsetUpstream, [branch]);
                 }
             }),
-            vscode.commands.registerCommand(BranchCommands.deleteUpstream, async (branch: Branch) => {
+            vscode.commands.registerCommand(BranchCommands.unsetUpstream, async (branch: Branch) => {
                 const config = vscode.workspace.getConfiguration('scm-local-branches');
                 if (config.get('confirmDelete', false)) {
                     const confirmButton = 'Confirm';
                     const action = await vscode.window.showWarningMessage(
-                        `Are you sure you want to remove the upstream for branch '${branch.branchName}?`,
+                        `Are you sure you want to stop tracking upstream ${branch.upstreamBranchName ?? ''} for branch '${branch.branchName}?`,
                         { modal: true },
                         confirmButton
                     );
@@ -128,7 +127,7 @@ export class BranchSwitcher {
                         return;
                     }
                 }
-                this.git.deleteUpstream(branch);
+                this.git.unsetUpstream(branch);
             })
         );
     }
