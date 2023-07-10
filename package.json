@@ -26,10 +26,10 @@
             "type": "object",
             "title": "vscode-git-branch-sidebar",
             "properties": {
-                "scm-local-branches.showUpstreamInformation": {
+                "scm-local-branches.showUpstreamStatus": {
                     "type": "boolean",
                     "default": true,
-                    "markdownDescription": "Show upstream information beside branch name",
+                    "markdownDescription": "Show upstream status beside branch name",
                     "scope": "window"
                 },
                 "scm-local-branches.confirmDelete": {
@@ -138,35 +138,23 @@
                 },
                 {
                     "command": "scm-local-branches.branch.rename",
-                    "when": "view == scm-local-branches && viewItem == branch"
-                },
-                {
-                    "command": "scm-local-branches.branch.rename",
-                    "when": "view == scm-local-branches && viewItem == activeBranch"
+                    "when": "view == scm-local-branches && viewItem != repo"
                 },
                 {
                     "command": "scm-local-branches.branch.set-upstream",
-                    "when": "view == scm-local-branches && viewItem == branch"
-                },
-                {
-                    "command": "scm-local-branches.branch.set-upstream",
-                    "when": "view == scm-local-branches && viewItem == activeBranch"
+                    "when": "view == scm-local-branches && viewItem != repo"
                 },
                 {
                     "command": "scm-local-branches.branch.unset-upstream",
-                    "when": "view == scm-local-branches && viewItem == branch"
-                },
-                {
-                    "command": "scm-local-branches.branch.unset-upstream",
-                    "when": "view == scm-local-branches && viewItem == activeBranch"
+                    "when": "view == scm-local-branches && (viewItem == branchWithUpstream || viewItem == activeBranchWithUpstream)"
                 },
                 {
                     "command": "scm-local-branches.branch.fetch",
-                    "when": "view == scm-local-branches && viewItem == branch"
+                    "when": "view == scm-local-branches && viewItem == branchWithUpstream"
                 },
                 {
                     "command": "scm-local-branches.branch.fetch-checkout",
-                    "when": "view == scm-local-branches && viewItem == branch"
+                    "when": "view == scm-local-branches && viewItem == branchWithUpstream"
                 }
             ]
         }
