@@ -125,15 +125,17 @@ export class Git implements vscode.Disposable {
         const gitBranches = await repo.getBranches({ remote: false })
             .then<GitBranch[]>((all) => Promise.all(all.map((b) => repo.getBranch(b.name!!))));
         const head = repo.state.HEAD;
-        const viewBranches: Branch[] = gitBranches.map((branch) => {
-            return {
-                repo,
-                branchName: branch.name,
-                selected: branch.name == head?.name,
-                upstreamState: this.createUpstreamStateString(branch),
-                upstream: branch.upstream
-            };
-        });
+        const viewBranches: Branch[] = gitBranches
+            .sort((lb, rb) => lb.name!!.localeCompare(rb.name!!))
+            .map((branch) => {
+                return {
+                    repo,
+                    branchName: branch.name,
+                    selected: branch.name == head?.name,
+                    upstreamState: this.createUpstreamStateString(branch),
+                    upstream: branch.upstream
+                };
+            });
 
         return viewBranches;
     }
@@ -155,13 +157,6 @@ export class Git implements vscode.Disposable {
         } else {
             return undefined;
         }
-    }
-
-    private getUpstreamBranchName(branch: GitBranch): string | undefined {
-        if (branch.upstream) {
-            return branch.upstream.remote + "/" + branch.upstream.name;
-        }
-        return undefined;
     }
 
     public async checkoutBranch(branch: Branch): Promise<void> {
@@ -199,7 +194,7 @@ export class Git implements vscode.Disposable {
 
     public async setUpstream(branch: Branch, upstream: string): Promise<void> {
         try {
-            branch.repo.setBranchUpstream(branch.branchName!!, upstream);
+            await branch.repo.setBranchUpstream(branch.branchName!!, upstream);
         } catch (err) {
             vscode.window.showErrorMessage('Failed to set upstream\n\n' + (err as any).stderr);
         }
@@ -237,7 +232,8 @@ export class Git implements vscode.Disposable {
         return await exec(
             [this.gitPath, ...args].join(' '),
             {
-                cwd: path
+                cwd: path,
+                timeout: 20000
             }
         );
     }

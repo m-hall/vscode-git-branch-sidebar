@@ -45,20 +45,33 @@ export class BranchTreeProvider implements vscode.TreeDataProvider<Branch>, vsco
         if (element.branchName) {
             var displayName = element.branchName;
             const config = vscode.workspace.getConfiguration('scm-local-branches');
-            if (config.get('showUpstreamInformation', true)) {
+            if (config.get('showUpstreamStatus', true)) {
                 displayName = (element.upstreamState ?? '') + displayName;
             }
             
             const item = new vscode.TreeItem(displayName);
+            item.tooltip = `name: ${element.branchName}`;
+            if (element.upstream) {
+                item.tooltip += `\ntracking branch: ${element.upstream.remote}/${element.upstream.name}`;
+                item.tooltip += `\nupstream status: ${element.upstreamState ?? 'in sync or gone'}`;
+            }
 
             if (element.selected) {
-                item.contextValue = TreeNodeContext.activeBranch;
+                if (element.upstream) {
+                    item.contextValue = TreeNodeContext.activeBranchWithUpstream;
+                } else {
+                    item.contextValue = TreeNodeContext.activeBranch;
+                }
                 item.iconPath = {
                     dark: vscode.Uri.file(path.join(this.context.extensionPath, 'images/dark/check.svg')),
                     light: vscode.Uri.file(path.join(this.context.extensionPath, 'images/light/check.svg'))
                 };
             } else {
-                item.contextValue = TreeNodeContext.branch;
+                if (element.upstream) {
+                    item.contextValue = TreeNodeContext.branchWithUpstream;
+                } else {
+                    item.contextValue = TreeNodeContext.branch;
+                }
                 item.command = {
                     command: BranchCommands.checkout,
                     arguments: [element],
