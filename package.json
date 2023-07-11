@@ -100,12 +100,12 @@
                 "title": "Unset upstream"
             },
             {
-                "command": "scm-local-branches.branch.fetch",
-                "title": "Fetch changes"
+                "command": "scm-local-branches.branch.sync",
+                "title": "Sync with remote"
             },
             {
-                "command": "scm-local-branches.branch.fetch-checkout",
-                "title": "Fetch changes & Checkout"
+                "command": "scm-local-branches.branch.sync-checkout",
+                "title": "Sync & Checkout"
             }
         ],
         "menus": {
@@ -129,32 +129,38 @@
                 },
                 {
                     "command": "scm-local-branches.branch.delete",
-                    "when": "view == scm-local-branches && viewItem == branch",
+                    "when": "view == scm-local-branches && (viewItem == branch || viewItem == branchWithUpstream)",
                     "group": "inline"
                 },
                 {
                     "command": "scm-local-branches.branch.delete",
-                    "when": "view == scm-local-branches && viewItem == branch"
+                    "when": "view == scm-local-branches && (viewItem == branch || viewItem == branchWithUpstream)",
+                    "group": "branchActions@2"
                 },
                 {
                     "command": "scm-local-branches.branch.rename",
-                    "when": "view == scm-local-branches && viewItem != repo"
+                    "when": "view == scm-local-branches && viewItem != repo",
+                    "group": "branchActions@1"
                 },
                 {
                     "command": "scm-local-branches.branch.set-upstream",
-                    "when": "view == scm-local-branches && viewItem != repo"
+                    "when": "view == scm-local-branches && viewItem != repo",
+                    "group": "upstreams@1"
                 },
                 {
                     "command": "scm-local-branches.branch.unset-upstream",
-                    "when": "view == scm-local-branches && (viewItem == branchWithUpstream || viewItem == activeBranchWithUpstream)"
+                    "when": "view == scm-local-branches && (viewItem == branchWithUpstream || viewItem == activeBranchWithUpstream)",
+                    "group": "upstreams@2"
                 },
                 {
-                    "command": "scm-local-branches.branch.fetch",
-                    "when": "view == scm-local-branches && viewItem == branchWithUpstream"
+                    "command": "scm-local-branches.branch.sync",
+                    "when": "view == scm-local-branches && viewItem == branchWithUpstream",
+                    "group": "upstreams@3"
                 },
                 {
-                    "command": "scm-local-branches.branch.fetch-checkout",
-                    "when": "view == scm-local-branches && viewItem == branchWithUpstream"
+                    "command": "scm-local-branches.branch.sync-checkout",
+                    "when": "view == scm-local-branches && viewItem == branchWithUpstream",
+                    "group": "upstreams@4"
                 }
             ]
         }

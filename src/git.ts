@@ -178,6 +178,7 @@ export class Git implements vscode.Disposable {
     public async renameBranch(branch: Branch, newName: string): Promise<void> {
         if (!this.validBranchName.test(newName)) {
             vscode.window.showErrorMessage('Branch name is not valid');
+            return;
         }
 
         try {
@@ -201,6 +202,9 @@ export class Git implements vscode.Disposable {
     }
 
     public async unsetUpstream(branch: Branch): Promise<void> {
+        if (!branch.upstream) {
+            return;
+        }
         try {
             await this.execCustomAction(branch.repo, ['branch', '--unset-upstream', branch.branchName!!])
             this.reposChanged.fire();
@@ -209,7 +213,7 @@ export class Git implements vscode.Disposable {
         }
     }
 
-    public async fetch(branch: Branch): Promise<void> {
+    public async sync(branch: Branch): Promise<void> {
         if (!branch.upstream) {
             vscode.window.showErrorMessage('Branch does not have upstream set');
             return;
