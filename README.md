@@ -13,7 +13,7 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.5.1
+### 1.6.0 - 2022-06-09
 
-* Don't select prefix by default when renaming branches
-
+* Add option to show upstream status (Thanks @v-mas)
+* Add menu items to sync branches (Thanks @v-mas)

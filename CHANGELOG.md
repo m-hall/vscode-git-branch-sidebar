@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.6.0] - 2022-06-09
+
+* Add option to show upstream status (Thanks @v-mas)
+* Add menu items to sync branches (Thanks @v-mas)
+
 ## [1.5.1] - 2022-06-09
 
 * Don't select prefix by default when renaming branches
