@@ -213,7 +213,7 @@ export class Git implements vscode.Disposable {
         }
     }
 
-    public async sync(branch: Branch): Promise<void> {
+    public async pull(branch: Branch): Promise<void> {
         if (!branch.upstream) {
             vscode.window.showErrorMessage('Branch does not have upstream set');
             return;

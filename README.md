@@ -13,7 +13,6 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.6.0 - 2022-06-09
+### 1.6.1 - 2022-08-21
 
-* Add option to show upstream status (Thanks @v-mas)
-* Add menu items to sync branches (Thanks @v-mas)
+* Rename "Sync" commands to "Pull" for more accuracy

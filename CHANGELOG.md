@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.6.1] - 2022-08-21
+
+* Rename "Sync" commands to "Pull" for more accuracy
+
 ## [1.6.0] - 2022-06-09
 
 * Add option to show upstream status (Thanks @v-mas)

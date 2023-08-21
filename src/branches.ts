@@ -130,16 +130,16 @@ export class BranchSwitcher {
                 }
                 await this.git.unsetUpstream(branch);
             }),
-            vscode.commands.registerCommand(BranchCommands.sync, async (branch: Branch) => {
+            vscode.commands.registerCommand(BranchCommands.pull, async (branch: Branch) => {
                 await vscode.window.withProgress({
                     location: { viewId: EXTENION_NAME }
-                }, async () => this.git.sync(branch))
+                }, async () => this.git.pull(branch))
             }),
-            vscode.commands.registerCommand(BranchCommands.syncCheckout, async (branch: Branch) => {
+            vscode.commands.registerCommand(BranchCommands.pullCheckout, async (branch: Branch) => {
                 await vscode.window.withProgress({
                     location: { viewId: EXTENION_NAME }
                 }, async () => {
-                    await this.git.sync(branch);
+                    await this.git.pull(branch);
                     await this.git.checkoutBranch(branch);
                 })
             })

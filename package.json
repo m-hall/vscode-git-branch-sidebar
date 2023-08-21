@@ -2,7 +2,7 @@
     "name": "vscode-git-branch-sidebar",
     "displayName": "vscode-git-branch-sidebar",
     "description": "Adds a branches section to the source control sidebar for git",
-    "version": "1.6.0",
+    "version": "1.6.1",
     "publisher": "mia-hall",
     "repository": {
         "type": "git",
@@ -100,12 +100,12 @@
                 "title": "Unset upstream"
             },
             {
-                "command": "scm-local-branches.branch.sync",
-                "title": "Sync with remote"
+                "command": "scm-local-branches.branch.pull",
+                "title": "Pull changes from remote"
             },
             {
-                "command": "scm-local-branches.branch.sync-checkout",
-                "title": "Sync & Checkout"
+                "command": "scm-local-branches.branch.pull-checkout",
+                "title": "Pull changes & Checkout"
             }
         ],
         "menus": {
@@ -153,12 +153,12 @@
                     "group": "upstreams@2"
                 },
                 {
-                    "command": "scm-local-branches.branch.sync",
+                    "command": "scm-local-branches.branch.pull",
                     "when": "view == scm-local-branches && viewItem == branchWithUpstream",
                     "group": "upstreams@3"
                 },
                 {
-                    "command": "scm-local-branches.branch.sync-checkout",
+                    "command": "scm-local-branches.branch.pull-checkout",
                     "when": "view == scm-local-branches && viewItem == branchWithUpstream",
                     "group": "upstreams@4"
                 }
