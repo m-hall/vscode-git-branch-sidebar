@@ -50,7 +50,8 @@
             "scm": [
                 {
                     "id": "scm-local-branches",
-                    "name": "Local Branches"
+                    "name": "Local Branches",
+                    "icon": "images/extension.svg"
                 }
             ]
         },

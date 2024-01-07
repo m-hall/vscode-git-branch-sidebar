@@ -1,0 +1,18 @@
+<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>Layer 1</title>
+  <g stroke="null" id="svg_27">
+   <ellipse stroke="#000" stroke-width="2" ry="4.19184" rx="4.19184" id="svg_1" cy="31.96976" cx="6.03395" fill="#fff"/>
+   <ellipse stroke="#000" stroke-width="2" ry="4.19184" rx="4.19184" id="svg_3" cy="31.90877" cx="58.07642" fill="#fff"/>
+   <ellipse stroke="#000" stroke-width="2" ry="4.19184" rx="4.19184" id="svg_4" cy="14.34974" cx="48.56885" fill="#fff"/>
+   <ellipse stroke="#000" stroke-width="2" ry="4.19184" rx="4.19184" id="svg_5" cy="47.51463" cx="34.39055" fill="#fff"/>
+   <path stroke="#000" id="svg_8" d="m10.96553,32.35001" opacity="NaN" fill="#fff"/>
+   <path stroke="#000" id="svg_9" d="m22.92462,42.70633" opacity="NaN" fill="#fff"/>
+   <path stroke="#000" id="svg_13" d="m30.56857,51.95305" opacity="NaN" fill="none"/>
+   <path stroke="#000" stroke-width="2" id="svg_22" d="m14.30473,31.96976c8.75356,0 9.12343,5.37862 9.12343,7.88865c0,2.51002 -0.12329,7.6496 7.27408,7.76912" opacity="NaN" fill="#fff"/>
+   <path stroke="#000" stroke-width="2" id="svg_23" d="m27.48633,31.85685c8.75357,0 9.12343,-5.97154 9.12343,-8.75826c0,-2.78673 -0.12329,-8.49286 7.27408,-8.62556" opacity="NaN" fill="#fff"/>
+   <line stroke="#000" id="svg_26" y2="31.97104" x2="53.7342" y1="31.97104" x1="10.69171" stroke-width="2" fill="none"/>
+  </g>
+ </g>
+</svg>
