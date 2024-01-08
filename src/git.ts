@@ -219,7 +219,11 @@ export class Git implements vscode.Disposable {
             return;
         }
         try {
-            await this.execCustomAction(branch.repo, ['fetch', branch.upstream.remote, branch.upstream.name + ':' + branch.branchName!!]);
+            if (branch.selected) {
+                await this.execCustomAction(branch.repo, ['pull']);
+            } else {
+                await this.execCustomAction(branch.repo, ['fetch', branch.upstream.remote, branch.upstream.name + ':' + branch.branchName!!]);
+            }
             this.reposChanged.fire();
         } catch (err) {
             vscode.window.showErrorMessage('Failed to fetch changes\n\n' + (err as any).stderr);

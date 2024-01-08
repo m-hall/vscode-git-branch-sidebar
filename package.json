@@ -134,14 +134,14 @@
                     "group": "inline"
                 },
                 {
-                    "command": "scm-local-branches.branch.delete",
-                    "when": "view == scm-local-branches && (viewItem == branch || viewItem == branchWithUpstream)",
-                    "group": "branchActions@2"
-                },
-                {
                     "command": "scm-local-branches.branch.rename",
                     "when": "view == scm-local-branches && viewItem != repo",
                     "group": "branchActions@1"
+                },
+                {
+                    "command": "scm-local-branches.branch.delete",
+                    "when": "view == scm-local-branches && (viewItem == branch || viewItem == branchWithUpstream)",
+                    "group": "branchActions@2"
                 },
                 {
                     "command": "scm-local-branches.branch.set-upstream",
@@ -155,7 +155,7 @@
                 },
                 {
                     "command": "scm-local-branches.branch.pull",
-                    "when": "view == scm-local-branches && viewItem == branchWithUpstream",
+                    "when": "view == scm-local-branches && (viewItem == branchWithUpstream || viewItem == activeBranchWithUpstream)",
                     "group": "upstreams@3"
                 },
                 {
