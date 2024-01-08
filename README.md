@@ -13,6 +13,7 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 ## Release Notes
 
-### 1.6.1 - 2022-08-21
+### 1.6.2 - 2024-01-07
 
-* Rename "Sync" commands to "Pull" for more accuracy
+* Add custom icon for when moved to own sidebar view
+* Allow pulling changes from remote on active branch

@@ -1,10 +1,15 @@
 # Change Log
 
-## [1.6.1] - 2022-08-21
+## [1.6.2] - 2024-01-07
+
+* Add custom icon for when moved to own sidebar view
+* Allow pulling changes from remote on active branch
+
+## [1.6.1] - 2023-08-21
 
 * Rename "Sync" commands to "Pull" for more accuracy
 
-## [1.6.0] - 2022-06-09
+## [1.6.0] - 2023-06-09
 
 * Add option to show upstream status (Thanks @v-mas)
 * Add menu items to sync branches (Thanks @v-mas)
