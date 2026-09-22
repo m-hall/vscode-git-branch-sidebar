@@ -208,6 +208,10 @@
                     "dark": "images/dark/refresh.svg",
                     "light": "images/light/refresh.svg"
                 }
+            },
+            {
+                "command": "scm-remote-branches.branch.checkout",
+                "title": "Checkout"
             }
         ],
         "menus": {
@@ -323,6 +327,11 @@
                     "command": "scm-local-stashes.stash.drop",
                     "when": "view == scm-local-stashes && viewItem == stash && config.scm-local-branches.stashQuickDrop",
                     "group": "inline@3"
+                },
+                {
+                    "command": "scm-remote-branches.branch.checkout",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch",
+                    "group": "branchActions@1"
                 }
             ],
             "scm/resourceGroup/context": [
@@ -355,6 +364,10 @@
                 {
                     "command": "scm-local-stashes.scm.stash-unstaged",
                     "when": "scmLocalBranches:isSingleRepository"
+                },
+                {
+                    "command": "scm-remote-branches.branch.checkout",
+                    "when": "false"
                 }
             ]
         }

@@ -187,6 +187,33 @@ export class Git implements vscode.Disposable {
             });
     }
 
+    public async getLocalBranch(repo: Repository, name: string): Promise<GitBranch | undefined> {
+        try {
+            return await repo.getBranch(name);
+        } catch (err) {
+            // branch does not exist
+            return undefined;
+        }
+    }
+
+    public isValidBranchName(name: string): boolean {
+        return this.validBranchName.test(name);
+    }
+
+    public async checkoutRemoteBranch(branch: RemoteBranch, localName: string): Promise<void> {
+        if (!this.isValidBranchName(localName)) {
+            vscode.window.showErrorMessage('Branch name is not valid');
+            return;
+        }
+
+        try {
+            await this.execCustomAction(branch.repo, ['checkout', '-b', localName, '--track', `${branch.remote}/${branch.branchName}`]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to checkout branch\n\n' + (err as any).stderr);
+        }
+    }
+
     private createUpstreamStateString(branch: GitBranch): string | undefined {
         let upstreamState = null;
         if (branch.upstream) {

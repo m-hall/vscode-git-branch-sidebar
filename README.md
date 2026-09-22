@@ -7,7 +7,7 @@ Adds a quick access list of git branches and stashes to the source control sideb
 Adds 3 views to the source control sidebar activity.
 
 - Local Branches: Allows switching and deleting branches
-- Remote Branches: Lists branches on each remote (collapsed by default)
+- Remote Branches: Allows checking out remote branches as local tracking branches (collapsed by default)
 - Stashes: Allows viewing, applying and deleting stashes
 
 ## Settings
