@@ -8,6 +8,11 @@ Adds a list of local branches to the source control sidebar activity. Allows swi
 
 Adds a list of stashes to the source control sidebar activity. Allows creating, viewing, applying, popping and dropping stashes.
 
+## Settings
+
+* `scm-local-branches.stashQuickActions` - show quick access buttons to apply and/or pop stashes (`none`, `apply`, `pop` or `both`)
+* `scm-local-branches.stashQuickDrop` - show a quick access button to drop stashes
+
 ## Requirements
 
 * Only supports Git repositories

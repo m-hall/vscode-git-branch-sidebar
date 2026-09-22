@@ -4,6 +4,7 @@
 
 * Add a Stashes view to create, view, apply, pop and drop stashes
 * Add stash buttons to the Staged Changes and Changes sections of the Source Control view
+* Add settings for quick access apply/pop/drop buttons in the Stashes view
 
 ## [1.6.2] - 2024-01-07
 
