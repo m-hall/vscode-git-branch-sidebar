@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Git } from './git';
+import { Git, StashOptions } from './git';
 import { Stash } from './models/stash';
 import { StashTreeProvider } from './stash-tree-provider';
 import { StashContentProvider, STASH_SCHEME } from './stash-content-provider';
@@ -39,13 +39,20 @@ export class StashManager {
                 await this.git.refresh();
             }),
             vscode.commands.registerCommand(StashGlobalCommands.create, async () => {
-                await this.createStash(this.tree.getCurrentRepository(), false);
+                await this.createStash(this.tree.getCurrentRepository());
             }),
             vscode.commands.registerCommand(StashGlobalCommands.createIncludeUntracked, async () => {
-                await this.createStash(this.tree.getCurrentRepository(), true);
+                await this.createStash(this.tree.getCurrentRepository(), { includeUntracked: true });
             }),
             vscode.commands.registerCommand(StashGlobalCommands.createForRepo, async (node: Stash) => {
-                await this.createStash(node?.repo, false);
+                await this.createStash(node?.repo);
+            }),
+            vscode.commands.registerCommand(StashGlobalCommands.createFromStaged, async (group?: vscode.SourceControlResourceGroup) => {
+                await this.createStash(this.getRepositoryForGroup(group), { staged: true });
+            }),
+            vscode.commands.registerCommand(StashGlobalCommands.createFromUnstaged, async (group?: vscode.SourceControlResourceGroup) => {
+                // --keep-index leaves the staged changes in place so only unstaged changes are removed
+                await this.createStash(this.getRepositoryForGroup(group), { keepIndex: true });
             }),
         );
     }
@@ -83,14 +90,26 @@ export class StashManager {
         );
     }
 
-    private async createStash(repo: Repository|null|undefined, includeUntracked: boolean) {
+    private getRepositoryForGroup(group?: vscode.SourceControlResourceGroup): Repository|null {
+        const resource = group?.resourceStates[0];
+        if (!resource) {
+            return this.tree.getCurrentRepository();
+        }
+
+        return this.git.getRepository(resource.resourceUri);
+    }
+
+    private async createStash(repo: Repository|null|undefined, options: StashOptions = {}) {
         if (!repo) {
             return;
         }
 
         const message = await vscode.window.showInputBox({
             placeHolder: 'Enter a stash message (optional)',
-            prompt: includeUntracked ? 'Stash changes, including untracked files' : 'Stash changes'
+            prompt: options.staged ? 'Stash staged changes'
+                : options.keepIndex ? 'Stash unstaged changes'
+                : options.includeUntracked ? 'Stash changes, including untracked files'
+                : 'Stash changes'
         });
 
         if (message === undefined) {
@@ -100,6 +119,6 @@ export class StashManager {
 
         await vscode.window.withProgress({
             location: { viewId: VIEW_NAME }
-        }, async () => this.git.createStash(repo, message, includeUntracked));
+        }, async () => this.git.createStash(repo, message, options));
     }
 }

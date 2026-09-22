@@ -19,7 +19,9 @@
     ],
     "activationEvents": [
         "onView:scm-local-branches",
-        "onView:scm-local-stashes"
+        "onView:scm-local-stashes",
+        "onCommand:scm-local-stashes.scm.stash-staged",
+        "onCommand:scm-local-stashes.scm.stash-unstaged"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -161,6 +163,16 @@
                     "dark": "images/dark/close.svg",
                     "light": "images/light/close.svg"
                 }
+            },
+            {
+                "command": "scm-local-stashes.scm.stash-staged",
+                "title": "Stash staged changes",
+                "icon": "$(archive)"
+            },
+            {
+                "command": "scm-local-stashes.scm.stash-unstaged",
+                "title": "Stash unstaged changes",
+                "icon": "$(archive)"
             }
         ],
         "menus": {
@@ -261,6 +273,38 @@
                     "command": "scm-local-stashes.stash.drop",
                     "when": "view == scm-local-stashes && viewItem == stash",
                     "group": "stashActions@4"
+                }
+            ],
+            "scm/resourceGroup/context": [
+                {
+                    "command": "scm-local-stashes.scm.stash-staged",
+                    "when": "scmProvider == git && scmResourceGroup == index",
+                    "group": "inline"
+                },
+                {
+                    "command": "scm-local-stashes.scm.stash-unstaged",
+                    "when": "scmProvider == git && scmResourceGroup == workingTree",
+                    "group": "inline"
+                },
+                {
+                    "command": "scm-local-stashes.scm.stash-staged",
+                    "when": "scmProvider == git && scmResourceGroup == index",
+                    "group": "stash@1"
+                },
+                {
+                    "command": "scm-local-stashes.scm.stash-unstaged",
+                    "when": "scmProvider == git && scmResourceGroup == workingTree",
+                    "group": "stash@1"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "scm-local-stashes.scm.stash-staged",
+                    "when": "scmLocalBranches:isSingleRepository"
+                },
+                {
+                    "command": "scm-local-stashes.scm.stash-unstaged",
+                    "when": "scmLocalBranches:isSingleRepository"
                 }
             ]
         }

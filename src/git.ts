@@ -34,6 +34,12 @@ const execFile = (file: string, args: string[], options: child_process.ExecFileO
     });
 };
 
+export interface StashOptions {
+    includeUntracked?: boolean;
+    staged?: boolean;
+    keepIndex?: boolean;
+}
+
 export class Git implements vscode.Disposable {
     private gitPath?: string;
     private gitApi?: API;
@@ -135,6 +141,10 @@ export class Git implements vscode.Disposable {
 
     public getRepositories(): Repository[] {
         return this.repos;
+    }
+
+    public getRepository(uri: vscode.Uri): Repository | null {
+        return this.getApi()?.getRepository(uri) ?? null;
     }
 
     public async getBranches(repo: Repository): Promise<Branch[]> {
@@ -274,10 +284,16 @@ export class Git implements vscode.Disposable {
         }
     }
 
-    public async createStash(repo: Repository, message: string, includeUntracked: boolean): Promise<void> {
+    public async createStash(repo: Repository, message: string, options: StashOptions = {}): Promise<void> {
         const args = ['stash', 'push'];
-        if (includeUntracked) {
+        if (options.includeUntracked) {
             args.push('--include-untracked');
+        }
+        if (options.staged) {
+            args.push('--staged');
+        }
+        if (options.keepIndex) {
+            args.push('--keep-index');
         }
         if (message) {
             args.push('-m', message);
