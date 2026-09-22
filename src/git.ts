@@ -2,10 +2,26 @@ import * as vscode from 'vscode';
 import { GitExtension, Repository, API, Branch as GitBranch } from './typings/git-extension';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
+import { Stash } from './models/stash';
 
 const exec = (command: string, options?: child_process.ExecOptions): Promise<{stdout: string, stderr: string}> => {
     return new Promise((resolve, reject) => {
         child_process.exec(command, options, (err, stdout, stderr) => {
+            const result = {stdout: stdout.toString(), stderr: stderr.toString()};
+
+            if (err)  {
+                (<any>result).code = err;
+                reject(result);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
+
+const execFile = (file: string, args: string[], options: child_process.ExecFileOptions): Promise<{stdout: string, stderr: string}> => {
+    return new Promise((resolve, reject) => {
+        child_process.execFile(file, args, options, (err, stdout, stderr) => {
             const result = {stdout: stdout.toString(), stderr: stderr.toString()};
 
             if (err)  {
@@ -230,6 +246,91 @@ export class Git implements vscode.Disposable {
         }
     }
 
+    public async getStashes(repo: Repository): Promise<Stash[]> {
+        try {
+            // unit separator (\x1f) is used as the field delimiter so messages can contain anything
+            const { stdout } = await this.execCustomAction(repo, ['stash', 'list', '--format=%H%x1f%gs%x1f%cr']);
+
+            return stdout
+                .split('\n')
+                .filter((line) => line)
+                .map((line, index) => {
+                    const [commit, subject, date] = line.split('\x1f');
+                    // subject is formatted as "On <branch>: <message>" or "WIP on <branch>: <commit> <message>"
+                    const match = /^(?:WIP on|On) ([^:]+): (.*)$/.exec(subject);
+
+                    return {
+                        repo,
+                        index,
+                        commit,
+                        message: match ? match[2] : subject,
+                        branchName: match ? match[1] : undefined,
+                        date
+                    };
+                });
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to list stashes\n\n' + (err as any).stderr);
+            return [];
+        }
+    }
+
+    public async createStash(repo: Repository, message: string, includeUntracked: boolean): Promise<void> {
+        const args = ['stash', 'push'];
+        if (includeUntracked) {
+            args.push('--include-untracked');
+        }
+        if (message) {
+            args.push('-m', message);
+        }
+
+        try {
+            const { stdout } = await this.execCustomAction(repo, args);
+            if (stdout.startsWith('No local changes')) {
+                vscode.window.showInformationMessage('There are no local changes to stash');
+            }
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to create stash\n\n' + (err as any).stderr);
+        }
+    }
+
+    public async applyStash(stash: Stash): Promise<void> {
+        try {
+            await this.execCustomAction(stash.repo, ['stash', 'apply', String(stash.index)]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to apply stash\n\n' + ((err as any).stderr || (err as any).stdout));
+        }
+    }
+
+    public async popStash(stash: Stash): Promise<void> {
+        try {
+            await this.execCustomAction(stash.repo, ['stash', 'pop', String(stash.index)]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to pop stash\n\n' + ((err as any).stderr || (err as any).stdout));
+        }
+    }
+
+    public async dropStash(stash: Stash): Promise<void> {
+        try {
+            await this.execCustomAction(stash.repo, ['stash', 'drop', String(stash.index)]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to drop stash\n\n' + (err as any).stderr);
+        }
+    }
+
+    public async getStashPatch(repo: Repository, commit: string): Promise<string> {
+        try {
+            const { stdout } = await this.execCustomAction(repo, ['stash', 'show', '-p', commit]);
+            return stdout;
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to show stash\n\n' + (err as any).stderr);
+            return '';
+        }
+    }
+
     private async execCustomAction(repo: Repository, args: string[]): Promise<{stdout: string, stderr: string}> {
         const path = repo.rootUri.fsPath;
 
@@ -237,8 +338,9 @@ export class Git implements vscode.Disposable {
             return { stdout: "", stderr: "" };
         }
 
-        return await exec(
-            [this.gitPath, ...args].join(' '),
+        return await execFile(
+            this.gitPath ?? 'git',
+            args,
             {
                 cwd: path,
                 timeout: 20000

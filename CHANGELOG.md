@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+
+* Add a Stashes view to create, view, apply, pop and drop stashes
+
 ## [1.6.2] - 2024-01-07
 
 * Add custom icon for when moved to own sidebar view

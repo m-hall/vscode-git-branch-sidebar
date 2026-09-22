@@ -6,6 +6,8 @@ Adds a quick access list of git branches to the source control sidebar.
 
 Adds a list of local branches to the source control sidebar activity. Allows switching/deleting branches.
 
+Adds a list of stashes to the source control sidebar activity. Allows creating, viewing, applying, popping and dropping stashes.
+
 ## Requirements
 
 * Only supports Git repositories

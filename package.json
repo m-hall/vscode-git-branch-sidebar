@@ -18,7 +18,8 @@
         "vscode.git"
     ],
     "activationEvents": [
-        "onView:scm-local-branches"
+        "onView:scm-local-branches",
+        "onView:scm-local-stashes"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -51,6 +52,11 @@
                 {
                     "id": "scm-local-branches",
                     "name": "Local Branches",
+                    "icon": "images/extension.svg"
+                },
+                {
+                    "id": "scm-local-stashes",
+                    "name": "Stashes",
                     "icon": "images/extension.svg"
                 }
             ]
@@ -107,6 +113,54 @@
             {
                 "command": "scm-local-branches.branch.pull-checkout",
                 "title": "Pull changes & Checkout"
+            },
+            {
+                "command": "scm-local-stashes.create",
+                "title": "Stash changes",
+                "icon": {
+                    "dark": "images/dark/add.svg",
+                    "light": "images/light/add.svg"
+                }
+            },
+            {
+                "command": "scm-local-stashes.create-include-untracked",
+                "title": "Stash changes (include untracked)"
+            },
+            {
+                "command": "scm-local-stashes.refresh",
+                "title": "Refresh stash list",
+                "icon": {
+                    "dark": "images/dark/refresh.svg",
+                    "light": "images/light/refresh.svg"
+                }
+            },
+            {
+                "command": "scm-local-stashes.repo.create",
+                "title": "Stash changes",
+                "icon": {
+                    "dark": "images/dark/add.svg",
+                    "light": "images/light/add.svg"
+                }
+            },
+            {
+                "command": "scm-local-stashes.stash.show",
+                "title": "Show changes"
+            },
+            {
+                "command": "scm-local-stashes.stash.apply",
+                "title": "Apply"
+            },
+            {
+                "command": "scm-local-stashes.stash.pop",
+                "title": "Pop"
+            },
+            {
+                "command": "scm-local-stashes.stash.drop",
+                "title": "Drop",
+                "icon": {
+                    "dark": "images/dark/close.svg",
+                    "light": "images/light/close.svg"
+                }
             }
         ],
         "menus": {
@@ -120,6 +174,21 @@
                     "command": "scm-local-branches.refresh",
                     "when": "view == scm-local-branches",
                     "group": "navigation"
+                },
+                {
+                    "command": "scm-local-stashes.create",
+                    "when": "view == scm-local-stashes && scmLocalBranches:isSingleRepository",
+                    "group": "navigation"
+                },
+                {
+                    "command": "scm-local-stashes.refresh",
+                    "when": "view == scm-local-stashes",
+                    "group": "navigation"
+                },
+                {
+                    "command": "scm-local-stashes.create-include-untracked",
+                    "when": "view == scm-local-stashes && scmLocalBranches:isSingleRepository",
+                    "group": "stash@1"
                 }
             ],
             "view/item/context": [
@@ -162,6 +231,36 @@
                     "command": "scm-local-branches.branch.pull-checkout",
                     "when": "view == scm-local-branches && viewItem == branchWithUpstream",
                     "group": "upstreams@4"
+                },
+                {
+                    "command": "scm-local-stashes.repo.create",
+                    "when": "view == scm-local-stashes && viewItem == repo",
+                    "group": "inline"
+                },
+                {
+                    "command": "scm-local-stashes.stash.drop",
+                    "when": "view == scm-local-stashes && viewItem == stash",
+                    "group": "inline"
+                },
+                {
+                    "command": "scm-local-stashes.stash.show",
+                    "when": "view == scm-local-stashes && viewItem == stash",
+                    "group": "stashActions@1"
+                },
+                {
+                    "command": "scm-local-stashes.stash.apply",
+                    "when": "view == scm-local-stashes && viewItem == stash",
+                    "group": "stashActions@2"
+                },
+                {
+                    "command": "scm-local-stashes.stash.pop",
+                    "when": "view == scm-local-stashes && viewItem == stash",
+                    "group": "stashActions@3"
+                },
+                {
+                    "command": "scm-local-stashes.stash.drop",
+                    "when": "view == scm-local-stashes && viewItem == stash",
+                    "group": "stashActions@4"
                 }
             ]
         }

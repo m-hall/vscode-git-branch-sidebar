@@ -15,12 +15,12 @@ export class BranchSwitcher {
     private tree: BranchTreeProvider;
     private extensionContext: vscode.ExtensionContext;
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext, git: Git) {
         this.extensionContext = context;
-        this.git = new Git();
+        this.git = git;
         this.tree = new BranchTreeProvider(this.git, this.extensionContext);
 
-        this.extensionContext.subscriptions.push(this.git, this.tree);
+        this.extensionContext.subscriptions.push(this.tree);
 
         this.setupTree();
         this.setupGlobalCommands();
