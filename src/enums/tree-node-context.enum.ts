@@ -4,5 +4,7 @@ export enum TreeNodeContext {
     activeBranch = 'activeBranch',
     activeBranchWithUpstream = 'activeBranchWithUpstream',
     stash = 'stash',
+    remote = 'remote',
+    remoteBranch = 'remoteBranch',
     repo = 'repo'
 }

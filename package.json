@@ -21,7 +21,8 @@
         "onView:scm-local-branches",
         "onView:scm-local-stashes",
         "onCommand:scm-local-stashes.scm.stash-staged",
-        "onCommand:scm-local-stashes.scm.stash-unstaged"
+        "onCommand:scm-local-stashes.scm.stash-unstaged",
+        "onView:scm-remote-branches"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -73,6 +74,12 @@
                     "id": "scm-local-branches",
                     "name": "Local Branches",
                     "icon": "images/extension.svg"
+                },
+                {
+                    "id": "scm-remote-branches",
+                    "name": "Remote Branches",
+                    "icon": "images/extension.svg",
+                    "visibility": "collapsed"
                 },
                 {
                     "id": "scm-local-stashes",
@@ -193,6 +200,14 @@
                 "command": "scm-local-stashes.scm.stash-unstaged",
                 "title": "Stash unstaged changes",
                 "icon": "$(archive)"
+            },
+            {
+                "command": "scm-remote-branches.refresh",
+                "title": "Refresh remote branch list",
+                "icon": {
+                    "dark": "images/dark/refresh.svg",
+                    "light": "images/light/refresh.svg"
+                }
             }
         ],
         "menus": {
@@ -221,6 +236,11 @@
                     "command": "scm-local-stashes.create-include-untracked",
                     "when": "view == scm-local-stashes && scmLocalBranches:isSingleRepository",
                     "group": "stash@1"
+                },
+                {
+                    "command": "scm-remote-branches.refresh",
+                    "when": "view == scm-remote-branches",
+                    "group": "navigation"
                 }
             ],
             "view/item/context": [

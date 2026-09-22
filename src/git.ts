@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
-import { GitExtension, Repository, API, Branch as GitBranch } from './typings/git-extension';
+import { GitExtension, Repository, API, Branch as GitBranch, RefType } from './typings/git-extension';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
 import { Stash } from './models/stash';
+import { RemoteBranch } from './models/remote-branch';
 
 const exec = (command: string, options?: child_process.ExecOptions): Promise<{stdout: string, stderr: string}> => {
     return new Promise((resolve, reject) => {
@@ -164,6 +165,26 @@ export class Git implements vscode.Disposable {
             });
 
         return viewBranches;
+    }
+
+    public async getRemoteBranches(repo: Repository, remote: string): Promise<RemoteBranch[]> {
+        const prefix = remote + '/';
+        const refs = await repo.getBranches({ remote: true });
+
+        return refs
+            .filter((ref) => ref.type === RefType.RemoteHead && ref.remote === remote && ref.name)
+            .map((ref) => ref.name!!.startsWith(prefix) ? ref.name!!.substring(prefix.length) : ref.name!!)
+            // HEAD is a symbolic ref to the remote's default branch, not a real branch
+            .filter((name) => name !== 'HEAD')
+            .sort((l, r) => l.localeCompare(r))
+            .map((branchName) => {
+                return {
+                    repo,
+                    remote,
+                    branchName,
+                    commit: refs.find((ref) => ref.name === prefix + branchName)?.commit
+                };
+            });
     }
 
     private createUpstreamStateString(branch: GitBranch): string | undefined {
