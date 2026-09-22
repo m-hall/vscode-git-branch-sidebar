@@ -52,10 +52,22 @@ export class RemoteBranchTreeProvider implements vscode.TreeDataProvider<RemoteB
 
     getTreeItem(element: RemoteBranch): vscode.TreeItem {
         if (element.branchName) {
+            const localBranches = element.localBranches ?? [];
             const item = new vscode.TreeItem(element.branchName);
             item.tooltip = `name: ${element.remote}/${element.branchName}`;
             if (element.commit) {
                 item.tooltip += `\ncommit: ${element.commit.substring(0, 8)}`;
+            }
+
+            if (localBranches.length > 0) {
+                item.tooltip += `\nlocal ${localBranches.length === 1 ? 'branch' : 'branches'}: ${localBranches.join(', ')}`;
+                item.iconPath = new vscode.ThemeIcon('link');
+                // only call out the local name when it isn't obvious from the remote name
+                if (localBranches.length > 1 || localBranches[0] !== element.branchName) {
+                    item.description = localBranches.join(', ');
+                }
+            } else {
+                item.tooltip += '\nno local branch';
             }
             item.contextValue = TreeNodeContext.remoteBranch;
 

@@ -5,4 +5,5 @@ export interface RemoteBranch {
     readonly remote?: string;
     readonly branchName?: string;
     readonly commit?: string;
+    readonly localBranches?: string[];
 };

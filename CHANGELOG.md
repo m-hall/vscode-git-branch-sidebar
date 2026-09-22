@@ -5,7 +5,7 @@
 * Add a Stashes view to create, view, apply, pop and drop stashes
 * Add stash buttons to the Staged Changes and Changes sections of the Source Control view
 * Add settings for quick access apply/pop/drop buttons in the Stashes view
-* Add a Remote Branches view, with checkout of remote branches into local tracking branches
+* Add a Remote Branches view, showing which remote branches have local tracking branches, with checkout of remote branches into local tracking branches
 
 ## [1.6.2] - 2024-01-07
 

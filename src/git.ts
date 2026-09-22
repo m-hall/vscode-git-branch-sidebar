@@ -169,7 +169,10 @@ export class Git implements vscode.Disposable {
 
     public async getRemoteBranches(repo: Repository, remote: string): Promise<RemoteBranch[]> {
         const prefix = remote + '/';
-        const refs = await repo.getBranches({ remote: true });
+        const [refs, trackingBranches] = await Promise.all([
+            repo.getBranches({ remote: true }),
+            this.getTrackingBranches(repo)
+        ]);
 
         return refs
             .filter((ref) => ref.type === RefType.RemoteHead && ref.remote === remote && ref.name)
@@ -182,9 +185,30 @@ export class Git implements vscode.Disposable {
                     repo,
                     remote,
                     branchName,
-                    commit: refs.find((ref) => ref.name === prefix + branchName)?.commit
+                    commit: refs.find((ref) => ref.name === prefix + branchName)?.commit,
+                    localBranches: trackingBranches.get(`refs/remotes/${remote}/${branchName}`) ?? []
                 };
             });
+    }
+
+    /**
+     * Map of upstream ref (e.g. refs/remotes/origin/main) to the local branches tracking it
+     */
+    private async getTrackingBranches(repo: Repository): Promise<Map<string, string[]>> {
+        const tracking = new Map<string, string[]>();
+        try {
+            const { stdout } = await this.execCustomAction(repo, ['for-each-ref', '--format=%(refname:lstrip=2)%1f%(upstream)', 'refs/heads']);
+            for (const line of stdout.split('\n')) {
+                const [local, upstream] = line.split('\x1f');
+                if (local && upstream) {
+                    tracking.set(upstream, [...(tracking.get(upstream) ?? []), local]);
+                }
+            }
+        } catch (err) {
+            // treat as no tracking information, the list of remote branches is still useful
+        }
+
+        return tracking;
     }
 
     public async getLocalBranch(repo: Repository, name: string): Promise<GitBranch | undefined> {
