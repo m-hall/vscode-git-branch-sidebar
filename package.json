@@ -47,22 +47,16 @@
                     "markdownDescription": "Rename will not select the prefix by default when choosing a new name.",
                     "scope": "window"
                 },
-                "scm-local-branches.stashQuickActions": {
-                    "type": "string",
-                    "enum": [
-                        "none",
-                        "apply",
-                        "pop",
-                        "both"
-                    ],
-                    "enumDescriptions": [
-                        "No quick access buttons",
-                        "Show a quick access button to apply a stash",
-                        "Show a quick access button to pop a stash",
-                        "Show quick access buttons to both apply and pop a stash"
-                    ],
-                    "default": "none",
-                    "markdownDescription": "Show quick access buttons for applying and/or popping stashes in the Stashes view.",
+                "scm-local-branches.stashQuickApply": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Show a quick access button for applying stashes in the Stashes view.",
+                    "scope": "window"
+                },
+                "scm-local-branches.stashQuickPop": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Show a quick access button for popping stashes in the Stashes view.",
                     "scope": "window"
                 },
                 "scm-local-branches.stashQuickDrop": {
@@ -297,12 +291,12 @@
                 },
                 {
                     "command": "scm-local-stashes.stash.apply",
-                    "when": "view == scm-local-stashes && viewItem == stash && config.scm-local-branches.stashQuickActions =~ /^(apply|both)$/",
+                    "when": "view == scm-local-stashes && viewItem == stash && config.scm-local-branches.stashQuickApply",
                     "group": "inline@1"
                 },
                 {
                     "command": "scm-local-stashes.stash.pop",
-                    "when": "view == scm-local-stashes && viewItem == stash && config.scm-local-branches.stashQuickActions =~ /^(pop|both)$/",
+                    "when": "view == scm-local-stashes && viewItem == stash && config.scm-local-branches.stashQuickPop",
                     "group": "inline@2"
                 },
                 {
