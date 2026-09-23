@@ -84,7 +84,8 @@
                 {
                     "id": "scm-local-stashes",
                     "name": "Stashes",
-                    "icon": "images/extension.svg"
+                    "icon": "images/extension.svg",
+                    "visibility": "collapsed"
                 }
             ]
         },

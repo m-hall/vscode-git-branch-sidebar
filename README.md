@@ -8,7 +8,7 @@ Adds 3 views to the source control sidebar activity.
 
 - Local Branches: Allows switching and deleting branches
 - Remote Branches: Allows checking out remote branches as local tracking branches (collapsed by default)
-- Stashes: Allows viewing, applying and deleting stashes
+- Stashes: Allows viewing, applying and deleting stashes (collapsed by default)
 
 ## Settings
 
