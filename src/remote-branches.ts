@@ -76,6 +76,10 @@ export class RemoteBranchManager {
                     await this.git.checkoutRemoteBranch(branch, localName);
                 }
             }),
+            vscode.commands.registerCommand(RemoteBranchCommands.showGraph, async (branch: RemoteBranch) => {
+                const remoteName = `${branch.remote}/${branch.branchName}`;
+                this.git.showGraph(branch.repo, `refs/remotes/${remoteName}`, remoteName);
+            }),
         );
     }
 }

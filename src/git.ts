@@ -257,6 +257,17 @@ export class Git implements vscode.Disposable {
         }
     }
 
+    public showGraph(repo: Repository, ref: string, name: string): void {
+        // run git directly rather than through a shell, so the ref never needs quoting
+        const terminal = vscode.window.createTerminal({
+            name: `Graph: ${name}`,
+            cwd: repo.rootUri,
+            shellPath: this.gitPath ?? 'git',
+            shellArgs: ['log', '--graph', '--oneline', '--decorate', ref, '--']
+        });
+        terminal.show();
+    }
+
     public async checkoutBranch(branch: Branch): Promise<void> {
         try {
             await branch.repo.checkout(branch.branchName!!);

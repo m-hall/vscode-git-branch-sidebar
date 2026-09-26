@@ -142,6 +142,9 @@ export class BranchSwitcher {
                     await this.git.pull(branch);
                     await this.git.checkoutBranch(branch);
                 })
+            }),
+            vscode.commands.registerCommand(BranchCommands.showGraph, async (branch: Branch) => {
+                this.git.showGraph(branch.repo, `refs/heads/${branch.branchName}`, branch.branchName!!);
             })
         );
     }

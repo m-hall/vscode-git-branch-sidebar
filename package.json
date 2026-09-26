@@ -160,6 +160,10 @@
                 "title": "Pull changes & Checkout"
             },
             {
+                "command": "scm-local-branches.branch.show-graph",
+                "title": "Show graph"
+            },
+            {
                 "command": "scm-local-stashes.create",
                 "title": "Stash changes",
                 "icon": {
@@ -231,6 +235,10 @@
                 "command": "scm-remote-branches.branch.checkout",
                 "title": "Checkout",
                 "icon": "$(git-branch)"
+            },
+            {
+                "command": "scm-remote-branches.branch.show-graph",
+                "title": "Show graph"
             }
         ],
         "menus": {
@@ -308,6 +316,11 @@
                     "group": "upstreams@4"
                 },
                 {
+                    "command": "scm-local-branches.branch.show-graph",
+                    "when": "view == scm-local-branches && viewItem != repo",
+                    "group": "history@1"
+                },
+                {
                     "command": "scm-local-stashes.repo.create",
                     "when": "view == scm-local-stashes && viewItem == repo",
                     "group": "inline"
@@ -353,6 +366,11 @@
                     "group": "branchActions@1"
                 },
                 {
+                    "command": "scm-remote-branches.branch.show-graph",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch",
+                    "group": "history@1"
+                },
+                {
                     "command": "scm-remote-branches.branch.checkout",
                     "when": "view == scm-remote-branches && viewItem == remoteBranch && config.scm-local-branches.remoteCheckoutAction == quick",
                     "group": "inline"
@@ -391,6 +409,14 @@
                 },
                 {
                     "command": "scm-remote-branches.branch.checkout",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-local-branches.branch.show-graph",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-remote-branches.branch.show-graph",
                     "when": "false"
                 }
             ]

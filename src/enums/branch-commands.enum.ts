@@ -6,5 +6,6 @@ export enum BranchCommands {
     setUpstream = 'scm-local-branches.branch.set-upstream',
     unsetUpstream = 'scm-local-branches.branch.unset-upstream',
     pull = 'scm-local-branches.branch.pull',
-    pullCheckout = 'scm-local-branches.branch.pull-checkout'
+    pullCheckout = 'scm-local-branches.branch.pull-checkout',
+    showGraph = 'scm-local-branches.branch.show-graph'
 }
