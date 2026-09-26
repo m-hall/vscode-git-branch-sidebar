@@ -3,6 +3,7 @@ import { Repository } from './typings/git-extension';
 import { Git } from './git';
 import { RemoteBranch } from './models/remote-branch';
 import { TreeNodeContext } from './enums/tree-node-context.enum';
+import { RemoteBranchCommands } from './enums/remote-branch-commands.enum';
 
 export class RemoteBranchTreeProvider implements vscode.TreeDataProvider<RemoteBranch>, vscode.Disposable {
     private repos: Repository[] = [];
@@ -24,13 +25,22 @@ export class RemoteBranchTreeProvider implements vscode.TreeDataProvider<RemoteB
         this.disposables.push(
             this.git.reposChanged.event(() => {
                 this.updateRepos();
-                if (this.visible) {
-                    this._onDidChangeTreeData.fire();
-                } else {
-                    this.stale = true;
+                this.refresh();
+            }),
+            vscode.workspace.onDidChangeConfiguration((e) => {
+                if (e.affectsConfiguration('scm-local-branches.remoteCheckoutAction')) {
+                    this.refresh();
                 }
             })
         );
+    }
+
+    private refresh(): void {
+        if (this.visible) {
+            this._onDidChangeTreeData.fire();
+        } else {
+            this.stale = true;
+        }
     }
 
     dispose(): void {
@@ -70,6 +80,15 @@ export class RemoteBranchTreeProvider implements vscode.TreeDataProvider<RemoteB
                 item.tooltip += '\nno local branch';
             }
             item.contextValue = TreeNodeContext.remoteBranch;
+
+            const config = vscode.workspace.getConfiguration('scm-local-branches');
+            if (config.get<string>('remoteCheckoutAction', 'quick') === 'primary') {
+                item.command = {
+                    command: RemoteBranchCommands.checkout,
+                    arguments: [element],
+                    title: 'Checkout'
+                };
+            }
 
             return item;
         }

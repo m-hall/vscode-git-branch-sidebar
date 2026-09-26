@@ -66,6 +66,22 @@
                     "default": true,
                     "markdownDescription": "Show a quick access button for dropping stashes in the Stashes view.",
                     "scope": "window"
+                },
+                "scm-local-branches.remoteCheckoutAction": {
+                    "type": "string",
+                    "enum": [
+                        "primary",
+                        "quick",
+                        "none"
+                    ],
+                    "enumDescriptions": [
+                        "Clicking a remote branch checks it out.",
+                        "Show a quick access button for checking out remote branches.",
+                        "Checkout is only available from the context menu."
+                    ],
+                    "default": "quick",
+                    "markdownDescription": "How the checkout action is shown for branches in the Remote Branches view.",
+                    "scope": "window"
                 }
             }
         },
@@ -213,7 +229,8 @@
             },
             {
                 "command": "scm-remote-branches.branch.checkout",
-                "title": "Checkout"
+                "title": "Checkout",
+                "icon": "$(git-branch)"
             }
         ],
         "menus": {
@@ -334,6 +351,11 @@
                     "command": "scm-remote-branches.branch.checkout",
                     "when": "view == scm-remote-branches && viewItem == remoteBranch",
                     "group": "branchActions@1"
+                },
+                {
+                    "command": "scm-remote-branches.branch.checkout",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch && config.scm-local-branches.remoteCheckoutAction == quick",
+                    "group": "inline"
                 }
             ],
             "scm/resourceGroup/context": [

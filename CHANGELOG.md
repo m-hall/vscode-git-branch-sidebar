@@ -6,6 +6,7 @@
 * Add stash buttons to the Staged Changes and Changes sections of the Source Control view
 * Add settings for quick access apply/pop/drop buttons in the Stashes view
 * Add a Remote Branches view, showing which remote branches have local tracking branches, with checkout of remote branches into local tracking branches
+* Add a setting to make remote branch checkout the click action, a quick access button, or neither
 
 ## [1.6.2] - 2024-01-07
 

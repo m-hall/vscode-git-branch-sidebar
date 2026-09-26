@@ -20,6 +20,7 @@ Adds 3 views to the source control sidebar activity.
 | `scm-local-branches.stashQuickApply`      | `false` | Show a quick access button to apply stashes                                 |
 | `scm-local-branches.stashQuickPop`        | `false` | Show a quick access button to pop stashes                                   |
 | `scm-local-branches.stashQuickDrop`       | `true`  | Show a quick access button to drop stashes                                  |
+| `scm-local-branches.remoteCheckoutAction` | `quick` | Checkout remote branches on click (`primary`), with a quick access button (`quick`), or only from the context menu (`none`) |
 
 ## Requirements
 
