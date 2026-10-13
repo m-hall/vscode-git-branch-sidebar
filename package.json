@@ -196,6 +196,10 @@
                 "title": "Show changes"
             },
             {
+                "command": "scm-local-stashes.stash.open-file",
+                "title": "Open changes"
+            },
+            {
                 "command": "scm-local-stashes.stash.apply",
                 "title": "Apply",
                 "icon": "$(run)"
@@ -406,6 +410,10 @@
                 {
                     "command": "scm-local-stashes.scm.stash-unstaged",
                     "when": "scmLocalBranches:isSingleRepository"
+                },
+                {
+                    "command": "scm-local-stashes.stash.open-file",
+                    "when": "false"
                 },
                 {
                     "command": "scm-remote-branches.branch.checkout",

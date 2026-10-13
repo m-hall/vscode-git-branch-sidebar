@@ -1,11 +1,24 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { Repository } from './typings/git-extension';
 import { Git } from './git';
-import { Stash } from './models/stash';
+import { Stash, StashFile, StashFileStatus } from './models/stash';
 import { StashCommands } from './enums/stash-commands.enum';
 import { TreeNodeContext } from './enums/tree-node-context.enum';
 
-export class StashTreeProvider implements vscode.TreeDataProvider<Stash>, vscode.Disposable {
+type StashTreeNode = Stash | StashFile;
+
+const isStashFile = (node: StashTreeNode): node is StashFile => 'status' in node;
+
+const STATUS_LABELS: { [status in StashFileStatus]: string } = {
+    [StashFileStatus.added]: 'Added',
+    [StashFileStatus.modified]: 'Modified',
+    [StashFileStatus.deleted]: 'Deleted',
+    [StashFileStatus.renamed]: 'Renamed',
+    [StashFileStatus.untracked]: 'Untracked'
+};
+
+export class StashTreeProvider implements vscode.TreeDataProvider<StashTreeNode>, vscode.Disposable {
     private repos: Repository[] = [];
 
     private _onDidChangeTreeData: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
@@ -35,9 +48,15 @@ export class StashTreeProvider implements vscode.TreeDataProvider<Stash>, vscode
         this.repos = this.git.getRepositories();
     }
 
-    getTreeItem(element: Stash): vscode.TreeItem {
+    getTreeItem(element: StashTreeNode): vscode.TreeItem {
+        if (isStashFile(element)) {
+            return this.getFileTreeItem(element);
+        }
+
         if (element.commit) {
             const item = new vscode.TreeItem(element.message || `stash@{${element.index}}`);
+            item.id = `${element.repo.rootUri.fsPath}:${element.commit}`;
+            item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
             item.description = [element.branchName, element.date].filter(Boolean).join(' · ');
             item.tooltip = `stash@{${element.index}}: ${element.message}`;
             if (element.branchName) {
@@ -45,11 +64,6 @@ export class StashTreeProvider implements vscode.TreeDataProvider<Stash>, vscode
             }
             item.tooltip += `\ncreated: ${element.date}`;
             item.contextValue = TreeNodeContext.stash;
-            item.command = {
-                command: StashCommands.show,
-                arguments: [element],
-                title: 'Show stash changes'
-            };
 
             return item;
         }
@@ -63,7 +77,27 @@ export class StashTreeProvider implements vscode.TreeDataProvider<Stash>, vscode
         return item;
     }
 
-    async getChildren(element: Stash): Promise<Stash[]> {
+    private getFileTreeItem(file: StashFile): vscode.TreeItem {
+        // resourceUri lets the file icon theme pick an icon for the file
+        const item = new vscode.TreeItem(vscode.Uri.joinPath(file.stash.repo.rootUri, file.path));
+        const directory = path.posix.dirname(file.path);
+        item.description = [directory === '.' ? '' : directory, file.status].filter(Boolean).join(' · ');
+        item.tooltip = `${file.path} · ${STATUS_LABELS[file.status]}`;
+        if (file.oldPath) {
+            item.tooltip += `\nfrom: ${file.oldPath}`;
+        }
+        item.iconPath = vscode.ThemeIcon.File;
+        item.contextValue = TreeNodeContext.stashFile;
+        item.command = {
+            command: StashCommands.openFile,
+            arguments: [file],
+            title: 'Open stash file changes'
+        };
+
+        return item;
+    }
+
+    async getChildren(element?: StashTreeNode): Promise<StashTreeNode[]> {
         if (!this.repos || this.repos.length < 1) {
             return [];
         }
@@ -80,13 +114,15 @@ export class StashTreeProvider implements vscode.TreeDataProvider<Stash>, vscode
                     };
                 });
             }
+        } else if (isStashFile(element)) {
+            return [];
         } else if (!element.commit) {
             // children of repo
             return await this.git.getStashes(element.repo);
         }
 
         // children of stash
-        return [];
+        return await this.git.getStashFiles(element);
     }
 
     public getCurrentRepository(): Repository|null {

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { GitExtension, Repository, API, Branch as GitBranch, RefType } from './typings/git-extension';
 import * as child_process from 'child_process';
 import { Branch } from './models/branch';
-import { Stash } from './models/stash';
+import { Stash, StashFile, StashFileStatus } from './models/stash';
 import { RemoteBranch } from './models/remote-branch';
 
 const exec = (command: string, options?: child_process.ExecOptions): Promise<{stdout: string, stderr: string}> => {
@@ -430,6 +430,53 @@ export class Git implements vscode.Disposable {
         }
     }
 
+    public async getStashFiles(stash: Stash): Promise<StashFile[]> {
+        const files: StashFile[] = [];
+        try {
+            // -z keeps paths unquoted, entries are "<status>\0<path>\0" or "R<score>\0<old>\0<new>\0" for renames
+            const { stdout } = await this.execCustomAction(stash.repo, ['diff', '--name-status', '-z', `${stash.commit}^1`, stash.commit!!]);
+            const parts = stdout.split('\0');
+            for (let i = 0; i < parts.length - 1;) {
+                const status = parts[i++].charAt(0);
+                if (status === StashFileStatus.renamed || status === 'C') {
+                    const oldPath = parts[i++];
+                    const path = parts[i++];
+                    files.push({ stash, path, oldPath, status: StashFileStatus.renamed });
+                } else {
+                    const path = parts[i++];
+                    const known = [StashFileStatus.added, StashFileStatus.deleted].find((s) => s === status);
+                    files.push({ stash, path, status: known ?? StashFileStatus.modified });
+                }
+            }
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to list stash files\n\n' + (err as any).stderr);
+            return [];
+        }
+
+        try {
+            // untracked files are stored in a third parent commit when stashed with --include-untracked
+            const { stdout } = await this.execCustomAction(stash.repo, ['ls-tree', '-r', '--name-only', '-z', `${stash.commit}^3`]);
+            stdout
+                .split('\0')
+                .filter((path) => path)
+                .forEach((path) => files.push({ stash, path, status: StashFileStatus.untracked }));
+        } catch (err) {
+            // no untracked files in this stash
+        }
+
+        return files.sort((l, r) => l.path.localeCompare(r.path));
+    }
+
+    public async getFileAtRef(repo: Repository, ref: string, path: string): Promise<string> {
+        try {
+            const { stdout } = await this.execCustomAction(repo, ['show', `${ref}:${path}`]);
+            return stdout;
+        } catch (err) {
+            // file does not exist at this ref
+            return '';
+        }
+    }
+
     private async execCustomAction(repo: Repository, args: string[]): Promise<{stdout: string, stderr: string}> {
         const path = repo.rootUri.fsPath;
 
@@ -442,7 +489,9 @@ export class Git implements vscode.Disposable {
             args,
             {
                 cwd: path,
-                timeout: 20000
+                timeout: 20000,
+                // file contents shown in stash diffs can exceed the default 1MB
+                maxBuffer: 64 * 1024 * 1024
             }
         );
     }

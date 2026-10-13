@@ -8,3 +8,18 @@ export interface Stash {
     readonly branchName?: string;
     readonly date?: string;
 };
+
+export enum StashFileStatus {
+    added = 'A',
+    modified = 'M',
+    deleted = 'D',
+    renamed = 'R',
+    untracked = 'U'
+}
+
+export interface StashFile {
+    readonly stash: Stash;
+    readonly path: string;
+    readonly oldPath?: string;
+    readonly status: StashFileStatus;
+};

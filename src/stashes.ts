@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { Git, StashOptions } from './git';
-import { Stash } from './models/stash';
+import * as path from 'path';
+import { Stash, StashFile } from './models/stash';
 import { StashTreeProvider } from './stash-tree-provider';
 import { StashContentProvider, STASH_SCHEME } from './stash-content-provider';
 import { Repository } from './typings/git-extension';
@@ -61,6 +62,11 @@ export class StashManager {
             vscode.commands.registerCommand(StashCommands.show, async (stash: Stash) => {
                 const doc = await vscode.workspace.openTextDocument(StashContentProvider.uriFor(stash));
                 await vscode.window.showTextDocument(doc, { preview: true });
+            }),
+            vscode.commands.registerCommand(StashCommands.openFile, async (file: StashFile) => {
+                const { left, right } = StashContentProvider.diffUrisFor(file);
+                const title = `${path.posix.basename(file.path)} (stash@{${file.stash.index}})`;
+                await vscode.commands.executeCommand('vscode.diff', left, right, title, { preview: true });
             }),
             vscode.commands.registerCommand(StashCommands.apply, async (stash: Stash) => {
                 await vscode.window.withProgress({
