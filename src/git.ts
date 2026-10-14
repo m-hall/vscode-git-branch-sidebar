@@ -83,12 +83,12 @@ export class Git implements vscode.Disposable {
             if (Array.isArray(pathConfig)) {
                 for (const gp of pathConfig) {
                     try {
-                        const {stdout, stderr} = await exec(
+                        await exec(
                             `${gp} --version`,
                         );
                         this.gitPath = gp;
                         return;
-                    } catch (err) { }
+                    } catch { }
                 }
             } else if (typeof pathConfig === 'string') {
                 this.gitPath = pathConfig;
@@ -161,7 +161,7 @@ export class Git implements vscode.Disposable {
                 return {
                     repo,
                     branchName: branch.name,
-                    selected: branch.name == head?.name,
+                    selected: branch.name === head?.name,
                     upstreamState: this.createUpstreamStateString(branch),
                     upstream: branch.upstream
                 };
@@ -207,7 +207,7 @@ export class Git implements vscode.Disposable {
                     tracking.set(upstream, [...(tracking.get(upstream) ?? []), local]);
                 }
             }
-        } catch (err) {
+        } catch {
             // treat as no tracking information, the list of remote branches is still useful
         }
 
@@ -217,7 +217,7 @@ export class Git implements vscode.Disposable {
     public async getLocalBranch(repo: Repository, name: string): Promise<GitBranch | undefined> {
         try {
             return await repo.getBranch(name);
-        } catch (err) {
+        } catch {
             // branch does not exist
             return undefined;
         }
@@ -249,7 +249,9 @@ export class Git implements vscode.Disposable {
                 upstreamState += '↑' + branch.ahead;
             }
             if (branch.behind) {
-                if (upstreamState) upstreamState += ' ';
+                if (upstreamState) {
+                    upstreamState += ' ';
+                }
                 upstreamState += '↓' + branch.behind;
             }
         }
@@ -463,7 +465,7 @@ export class Git implements vscode.Disposable {
                 .split('\0')
                 .filter((path) => path)
                 .forEach((path) => files.push({ stash, path, status: StashFileStatus.untracked }));
-        } catch (err) {
+        } catch {
             // no untracked files in this stash
         }
 
@@ -474,7 +476,7 @@ export class Git implements vscode.Disposable {
         try {
             const { stdout } = await this.execCustomAction(repo, ['show', `${ref}:${path}`]);
             return stdout;
-        } catch (err) {
+        } catch {
             // file does not exist at this ref
             return '';
         }
@@ -491,7 +493,7 @@ export class Git implements vscode.Disposable {
 
             try {
                 await this.execCustomAction(file.stash.repo, ['apply'], patch);
-            } catch (err) {
+            } catch {
                 // fall back to a merge against the staged version, which leaves conflict markers like `git stash apply` would.
                 // unstaged local changes make this fail too, leaving the file untouched.
                 await this.execCustomAction(file.stash.repo, ['apply', '--3way'], patch);
