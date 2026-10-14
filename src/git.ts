@@ -20,9 +20,9 @@ const exec = (command: string, options?: child_process.ExecOptions): Promise<{st
     });
 };
 
-const execFile = (file: string, args: string[], options: child_process.ExecFileOptions): Promise<{stdout: string, stderr: string}> => {
+const execFile = (file: string, args: string[], options: child_process.ExecFileOptions, input?: string): Promise<{stdout: string, stderr: string}> => {
     return new Promise((resolve, reject) => {
-        child_process.execFile(file, args, options, (err, stdout, stderr) => {
+        const child = child_process.execFile(file, args, options, (err, stdout, stderr) => {
             const result = {stdout: stdout.toString(), stderr: stderr.toString()};
 
             if (err)  {
@@ -32,6 +32,9 @@ const execFile = (file: string, args: string[], options: child_process.ExecFileO
                 resolve(result);
             }
         });
+        if (input !== undefined) {
+            child.stdin?.end(input);
+        }
     });
 };
 
@@ -477,7 +480,36 @@ export class Git implements vscode.Disposable {
         }
     }
 
-    private async execCustomAction(repo: Repository, args: string[]): Promise<{stdout: string, stderr: string}> {
+    public async applyStashFile(file: StashFile): Promise<void> {
+        const commit = file.stash.commit!!;
+        const paths = file.oldPath ? [file.oldPath, file.path] : [file.path];
+        try {
+            // untracked files live in a root commit, so --root diffs them against the empty tree
+            const { stdout: patch } = file.status === StashFileStatus.untracked
+                ? await this.execCustomAction(file.stash.repo, ['diff-tree', '-p', '--binary', '--root', `${commit}^3`, '--', ...paths])
+                : await this.execCustomAction(file.stash.repo, ['diff', '--binary', `${commit}^1`, commit, '--', ...paths]);
+
+            try {
+                await this.execCustomAction(file.stash.repo, ['apply'], patch);
+            } catch (err) {
+                // fall back to a merge against the staged version, which leaves conflict markers like `git stash apply` would.
+                // unstaged local changes make this fail too, leaving the file untouched.
+                await this.execCustomAction(file.stash.repo, ['apply', '--3way'], patch);
+            }
+            this.reposChanged.fire();
+        } catch (err) {
+            const output: string = (err as any).stderr || (err as any).stdout;
+            if (/with conflicts/.test(output)) {
+                // the merge succeeded but needs resolving
+                this.reposChanged.fire();
+                vscode.window.showWarningMessage(`Applied changes to ${file.path} with conflicts`);
+                return;
+            }
+            vscode.window.showErrorMessage('Failed to apply stash file\n\n' + output);
+        }
+    }
+
+    private async execCustomAction(repo: Repository, args: string[], input?: string): Promise<{stdout: string, stderr: string}> {
         const path = repo.rootUri.fsPath;
 
         if (!path) {
@@ -492,7 +524,8 @@ export class Git implements vscode.Disposable {
                 timeout: 20000,
                 // file contents shown in stash diffs can exceed the default 1MB
                 maxBuffer: 64 * 1024 * 1024
-            }
+            },
+            input
         );
     }
 }

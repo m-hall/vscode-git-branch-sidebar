@@ -200,6 +200,11 @@
                 "title": "Open changes"
             },
             {
+                "command": "scm-local-stashes.stash.apply-file",
+                "title": "Apply changes to file",
+                "icon": "$(run)"
+            },
+            {
                 "command": "scm-local-stashes.stash.apply",
                 "title": "Apply",
                 "icon": "$(run)"
@@ -355,6 +360,21 @@
                     "group": "inline@1"
                 },
                 {
+                    "command": "scm-local-stashes.stash.open-file",
+                    "when": "view == scm-local-stashes && viewItem == stashFile",
+                    "group": "stashFileActions@1"
+                },
+                {
+                    "command": "scm-local-stashes.stash.apply-file",
+                    "when": "view == scm-local-stashes && viewItem == stashFile",
+                    "group": "stashFileActions@2"
+                },
+                {
+                    "command": "scm-local-stashes.stash.apply-file",
+                    "when": "view == scm-local-stashes && viewItem == stashFile && config.scm-local-branches.stashQuickApply",
+                    "group": "inline@1"
+                },
+                {
                     "command": "scm-local-stashes.stash.pop",
                     "when": "view == scm-local-stashes && viewItem == stash && config.scm-local-branches.stashQuickPop",
                     "group": "inline@2"
@@ -413,6 +433,10 @@
                 },
                 {
                     "command": "scm-local-stashes.stash.open-file",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-local-stashes.stash.apply-file",
                     "when": "false"
                 },
                 {

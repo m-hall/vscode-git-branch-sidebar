@@ -68,6 +68,11 @@ export class StashManager {
                 const title = `${path.posix.basename(file.path)} (stash@{${file.stash.index}})`;
                 await vscode.commands.executeCommand('vscode.diff', left, right, title, { preview: true });
             }),
+            vscode.commands.registerCommand(StashCommands.applyFile, async (file: StashFile) => {
+                await vscode.window.withProgress({
+                    location: { viewId: VIEW_NAME }
+                }, async () => this.git.applyStashFile(file));
+            }),
             vscode.commands.registerCommand(StashCommands.apply, async (stash: Stash) => {
                 await vscode.window.withProgress({
                     location: { viewId: VIEW_NAME }
