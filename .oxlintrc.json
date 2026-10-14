@@ -1,0 +1,18 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": [],
+    "categories": {
+        "correctness": "warn"
+    },
+    "env": {
+        "builtin": true,
+        "es6": true,
+        "node": true
+    },
+    "rules": {
+        "curly": "warn",
+        "eqeqeq": ["warn", "always"],
+        "no-redeclare": "warn",
+        "no-throw-literal": "warn"
+    }
+}
