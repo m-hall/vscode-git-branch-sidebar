@@ -355,14 +355,15 @@ export class Git implements vscode.Disposable {
                 .map((line, index) => {
                     const [commit, subject, date] = line.split('\x1f');
                     // subject is formatted as "On <branch>: <message>" or "WIP on <branch>: <commit> <message>"
-                    const match = /^(?:WIP on|On) ([^:]+): (.*)$/.exec(subject);
+                    const match = /^(WIP on|On) ([^:]+): (.*)$/.exec(subject);
 
                     return {
                         repo,
                         index,
                         commit,
-                        message: match ? match[2] : subject,
-                        branchName: match ? match[1] : undefined,
+                        message: match ? match[3] : subject,
+                        hasCustomMessage: !match || match[1] === 'On',
+                        branchName: match ? match[2] : undefined,
                         date
                     };
                 });
@@ -410,6 +411,10 @@ export class Git implements vscode.Disposable {
     public async popStash(stash: Stash): Promise<void> {
         try {
             await this.execCustomAction(stash.repo, ['stash', 'pop', String(stash.index)]);
+            // the changes are back in progress, so pick their description back up unless a commit message is already being written
+            if (stash.hasCustomMessage && stash.message && !stash.repo.inputBox.value.trim()) {
+                stash.repo.inputBox.value = stash.message;
+            }
             this.reposChanged.fire();
         } catch (err) {
             vscode.window.showErrorMessage('Failed to pop stash\n\n' + ((err as any).stderr || (err as any).stdout));

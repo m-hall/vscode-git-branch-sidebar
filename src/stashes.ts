@@ -161,7 +161,11 @@ export class StashManager {
             return;
         }
 
+        // start from the commit message being written in Source Control, the input box only fits its first line
+        const commitMessage = repo.inputBox.value.split(/\r?\n/)[0].trim();
+
         const message = await vscode.window.showInputBox({
+            value: commitMessage,
             placeHolder: 'Enter a stash message (optional)',
             prompt: options.staged ? 'Stash staged changes'
                 : options.keepIndex ? 'Stash unstaged changes'

@@ -5,6 +5,8 @@ export interface Stash {
     readonly index?: number;
     readonly commit?: string;
     readonly message?: string;
+    // false when git generated the message from the last commit because none was given
+    readonly hasCustomMessage?: boolean;
     readonly branchName?: string;
     readonly date?: string;
 };
