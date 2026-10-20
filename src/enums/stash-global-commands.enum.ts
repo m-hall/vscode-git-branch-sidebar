@@ -4,5 +4,6 @@ export enum StashGlobalCommands {
     createIncludeUntracked = 'scm-local-stashes.create-include-untracked',
     createForRepo = 'scm-local-stashes.repo.create',
     createFromStaged = 'scm-local-stashes.scm.stash-staged',
-    createFromUnstaged = 'scm-local-stashes.scm.stash-unstaged'
+    createFromUnstaged = 'scm-local-stashes.scm.stash-unstaged',
+    clear = 'scm-local-stashes.clear'
 }

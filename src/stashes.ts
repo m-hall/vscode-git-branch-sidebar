@@ -55,6 +55,22 @@ export class StashManager {
                 // --keep-index leaves the staged changes in place so only unstaged changes are removed
                 await this.createStash(this.getRepositoryForGroup(group), { keepIndex: true });
             }),
+            vscode.commands.registerCommand(StashGlobalCommands.clear, async (node?: Stash) => {
+                const repo = node?.repo ?? this.tree.getCurrentRepository();
+                if (!repo) {
+                    return;
+                }
+                // always confirm, dropping every stash at once is not recoverable from the sidebar
+                const confirmButton = 'Clear';
+                const action = await vscode.window.showWarningMessage(
+                    'Are you sure you want to drop all stashes? This cannot be undone.',
+                    { modal: true },
+                    confirmButton
+                );
+                if (action === confirmButton) {
+                    await this.git.clearStashes(repo);
+                }
+            }),
         );
     }
     setupStashCommands() {
@@ -72,6 +88,36 @@ export class StashManager {
                 await vscode.window.withProgress({
                     location: { viewId: VIEW_NAME }
                 }, async () => this.git.applyStashFile(file));
+            }),
+            vscode.commands.registerCommand(StashCommands.compareFileWithWorkingTree, async (file: StashFile) => {
+                const { right: stashed } = StashContentProvider.diffUrisFor(file);
+                const working = vscode.Uri.joinPath(file.stash.repo.rootUri, file.path);
+                const title = `${path.posix.basename(file.path)} (stash@{${file.stash.index}}) ↔ Working Tree`;
+                await vscode.commands.executeCommand('vscode.diff', stashed, working, title, { preview: true });
+            }),
+            vscode.commands.registerCommand(StashCommands.openWorkingFile, async (file: StashFile) => {
+                await vscode.commands.executeCommand('vscode.open', vscode.Uri.joinPath(file.stash.repo.rootUri, file.path));
+            }),
+            vscode.commands.registerCommand(StashCommands.createBranch, async (stash: Stash) => {
+                const name = await vscode.window.showInputBox({
+                    placeHolder: 'Enter a branch name',
+                    prompt: `Create a branch from stash '${stash.message}'. The stash is dropped once it applies cleanly.`,
+                    validateInput: async (value) => {
+                        if (!this.git.isValidBranchName(value)) {
+                            return 'Branch name is not valid';
+                        }
+                        if (await this.git.getLocalBranch(stash.repo, value)) {
+                            return `A local branch named '${value}' already exists`;
+                        }
+                        return undefined;
+                    }
+                });
+
+                if (name) {
+                    await vscode.window.withProgress({
+                        location: { viewId: VIEW_NAME }
+                    }, async () => this.git.createBranchFromStash(stash, name));
+                }
             }),
             vscode.commands.registerCommand(StashCommands.apply, async (stash: Stash) => {
                 await vscode.window.withProgress({

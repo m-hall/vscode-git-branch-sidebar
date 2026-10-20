@@ -223,6 +223,22 @@
                 }
             },
             {
+                "command": "scm-local-stashes.stash.compare-file-with-working-tree",
+                "title": "Compare with working file"
+            },
+            {
+                "command": "scm-local-stashes.stash.open-working-file",
+                "title": "Open file"
+            },
+            {
+                "command": "scm-local-stashes.stash.create-branch",
+                "title": "Create branch from stash"
+            },
+            {
+                "command": "scm-local-stashes.clear",
+                "title": "Clear all stashes"
+            },
+            {
                 "command": "scm-local-stashes.scm.stash-staged",
                 "title": "Stash staged changes",
                 "icon": "$(archive)"
@@ -241,6 +257,11 @@
                 }
             },
             {
+                "command": "scm-remote-branches.fetch",
+                "title": "Fetch (prune)",
+                "icon": "$(cloud-download)"
+            },
+            {
                 "command": "scm-remote-branches.branch.checkout",
                 "title": "Checkout",
                 "icon": "$(git-branch)"
@@ -248,6 +269,22 @@
             {
                 "command": "scm-remote-branches.branch.show-graph",
                 "title": "Show graph"
+            },
+            {
+                "command": "scm-remote-branches.branch.merge",
+                "title": "Merge into current branch"
+            },
+            {
+                "command": "scm-remote-branches.branch.rebase",
+                "title": "Rebase current branch onto this"
+            },
+            {
+                "command": "scm-remote-branches.branch.delete",
+                "title": "Delete from remote"
+            },
+            {
+                "command": "scm-remote-branches.branch.copy-name",
+                "title": "Copy branch name"
             }
         ],
         "menus": {
@@ -276,6 +313,16 @@
                     "command": "scm-local-stashes.create-include-untracked",
                     "when": "view == scm-local-stashes && scmLocalBranches:isSingleRepository",
                     "group": "stash@1"
+                },
+                {
+                    "command": "scm-local-stashes.clear",
+                    "when": "view == scm-local-stashes && scmLocalBranches:isSingleRepository",
+                    "group": "stash@2"
+                },
+                {
+                    "command": "scm-remote-branches.fetch",
+                    "when": "view == scm-remote-branches",
+                    "group": "navigation"
                 },
                 {
                     "command": "scm-remote-branches.refresh",
@@ -345,6 +392,11 @@
                     "group": "stashActions@2"
                 },
                 {
+                    "command": "scm-local-stashes.stash.create-branch",
+                    "when": "view == scm-local-stashes && viewItem == stash",
+                    "group": "branch@1"
+                },
+                {
                     "command": "scm-local-stashes.stash.pop",
                     "when": "view == scm-local-stashes && viewItem == stash",
                     "group": "stashActions@3"
@@ -370,6 +422,21 @@
                     "group": "stashFileActions@2"
                 },
                 {
+                    "command": "scm-local-stashes.stash.compare-file-with-working-tree",
+                    "when": "view == scm-local-stashes && viewItem == stashFile",
+                    "group": "stashFileCompare@1"
+                },
+                {
+                    "command": "scm-local-stashes.stash.open-working-file",
+                    "when": "view == scm-local-stashes && viewItem == stashFile",
+                    "group": "stashFileCompare@2"
+                },
+                {
+                    "command": "scm-local-stashes.clear",
+                    "when": "view == scm-local-stashes && viewItem == repo",
+                    "group": "stash@2"
+                },
+                {
                     "command": "scm-local-stashes.stash.apply-file",
                     "when": "view == scm-local-stashes && viewItem == stashFile && config.scm-local-branches.stashQuickApply",
                     "group": "inline@1"
@@ -393,6 +460,31 @@
                     "command": "scm-remote-branches.branch.show-graph",
                     "when": "view == scm-remote-branches && viewItem == remoteBranch",
                     "group": "history@1"
+                },
+                {
+                    "command": "scm-remote-branches.branch.merge",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch",
+                    "group": "integrate@1"
+                },
+                {
+                    "command": "scm-remote-branches.branch.rebase",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch",
+                    "group": "integrate@2"
+                },
+                {
+                    "command": "scm-remote-branches.branch.delete",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch",
+                    "group": "branchActions@2"
+                },
+                {
+                    "command": "scm-remote-branches.branch.copy-name",
+                    "when": "view == scm-remote-branches && viewItem == remoteBranch",
+                    "group": "clipboard@1"
+                },
+                {
+                    "command": "scm-remote-branches.fetch",
+                    "when": "view == scm-remote-branches && (viewItem == remote || viewItem == repo)",
+                    "group": "inline"
                 },
                 {
                     "command": "scm-remote-branches.branch.checkout",
@@ -441,6 +533,34 @@
                 },
                 {
                     "command": "scm-remote-branches.branch.checkout",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-remote-branches.branch.merge",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-remote-branches.branch.rebase",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-remote-branches.branch.delete",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-remote-branches.branch.copy-name",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-local-stashes.stash.compare-file-with-working-tree",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-local-stashes.stash.open-working-file",
+                    "when": "false"
+                },
+                {
+                    "command": "scm-local-stashes.stash.create-branch",
                     "when": "false"
                 },
                 {

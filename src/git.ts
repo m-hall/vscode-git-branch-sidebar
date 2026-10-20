@@ -511,6 +511,74 @@ export class Git implements vscode.Disposable {
         }
     }
 
+    public async createBranchFromStash(stash: Stash, name: string): Promise<void> {
+        if (!this.isValidBranchName(name)) {
+            vscode.window.showErrorMessage('Branch name is not valid');
+            return;
+        }
+
+        try {
+            // checks out a new branch at the stash's base commit, applies the stash and drops it if that succeeds
+            await this.execCustomAction(stash.repo, ['stash', 'branch', name, String(stash.index)]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to create branch from stash\n\n' + ((err as any).stderr || (err as any).stdout));
+        }
+    }
+
+    public async clearStashes(repo: Repository): Promise<void> {
+        try {
+            await this.execCustomAction(repo, ['stash', 'clear']);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to clear stashes\n\n' + (err as any).stderr);
+        }
+    }
+
+    public async fetch(repo: Repository, remote?: string): Promise<void> {
+        try {
+            // the git extension's fetch handles credential prompts
+            await repo.fetch(remote ? { remote, prune: true } : { all: true, prune: true });
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to fetch\n\n' + ((err as any).stderr || (err as any).message));
+        }
+    }
+
+    public async mergeRemoteBranch(branch: RemoteBranch): Promise<void> {
+        await this.integrateRemoteBranch(branch, ['merge', '--no-edit'], 'merge');
+    }
+
+    public async rebaseOntoRemoteBranch(branch: RemoteBranch): Promise<void> {
+        await this.integrateRemoteBranch(branch, ['rebase'], 'rebase');
+    }
+
+    private async integrateRemoteBranch(branch: RemoteBranch, args: string[], action: string): Promise<void> {
+        const remoteName = `${branch.remote}/${branch.branchName}`;
+        try {
+            await this.execCustomAction(branch.repo, [...args, `refs/remotes/${remoteName}`]);
+            this.reposChanged.fire();
+        } catch (err) {
+            const output: string = [(err as any).stdout, (err as any).stderr].filter(Boolean).join('\n');
+            if (/CONFLICT|could not apply/.test(output)) {
+                // the operation started but stopped on conflicts, which are resolved from the Source Control view
+                this.reposChanged.fire();
+                vscode.window.showWarningMessage(`Conflicts during ${action} of '${remoteName}'. Resolve them in Source Control to continue.`);
+                return;
+            }
+            vscode.window.showErrorMessage(`Failed to ${action} '${remoteName}'\n\n` + output);
+        }
+    }
+
+    public async deleteRemoteBranch(branch: RemoteBranch): Promise<void> {
+        try {
+            await this.execCustomAction(branch.repo, ['push', branch.remote!!, '--delete', branch.branchName!!]);
+            this.reposChanged.fire();
+        } catch (err) {
+            vscode.window.showErrorMessage('Failed to delete remote branch\n\n' + (err as any).stderr);
+        }
+    }
+
     private async execCustomAction(repo: Repository, args: string[], input?: string): Promise<{stdout: string, stderr: string}> {
         const path = repo.rootUri.fsPath;
 
